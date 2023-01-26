@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react'
 // import { Camera, Group, Scene } from "@react-three/fiber";
 import { useFrame } from "@react-three/fiber"; //useThree, 
 // import { WebGLRenderer } from "@react-three/fiber"
-// import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, PerformanceMonitor } from "@react-three/drei";
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // import {useLoader} from "@react-three/fiber"
 // imports for our first scene
@@ -22,11 +22,6 @@ const World = () => {
   const cubeRef = useRef()
   const groupRef = useRef()
 
-  //initialize object positions with use-effect
-  useEffect(() => {
-
-
-  }, []);
 
   //runs on each frame run (based on framerate -need to account for variable FPS)
   useFrame((state, delta) => {
@@ -37,7 +32,8 @@ const World = () => {
   // removed from mesh: rotation-y={Math.PI * 0.23} and rotation-x={- Math.PI * 0.5}
 
   return <>
-    {/* <OrbitControls /> */}
+    <PerformanceMonitor />
+    <OrbitControls />
     <directionalLight position={[1, 2, 3]} intensity={.5} />
     <directionalLight intensity={.2} />
     <ambientLight intensity={0.2} />
