@@ -45,7 +45,7 @@ const World = () => {
         <meshStandardMaterial color="lightGreen" />
       </mesh>
     </group>
-    <mesh position-y={-1} scale={10}>
+    <mesh position-y={-1} scale={10} rotation-x={- Math.PI * 0.5}>
       <planeGeometry />
       <meshStandardMaterial color="pink" />
     </mesh>
