@@ -7,7 +7,7 @@ function App() {
     <div id="scene-container">
       <h1>Hello World</h1>
       <Canvas>
-        {/* <World /> */}
+        <World />
       </Canvas>
     </div>
   );
