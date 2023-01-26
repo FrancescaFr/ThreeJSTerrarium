@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 // import { Canvas } from "@react-three/fiber"; // import everything from react-three
 // import { Camera, Group, Scene } from "@react-three/fiber";
-// import { useFrame } from "@react-three/fiber"; //useThree, 
+import { useFrame } from "@react-three/fiber"; //useThree, 
 // import { WebGLRenderer } from "@react-three/fiber"
 // import { OrbitControls } from "@react-three/drei";
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -23,10 +23,10 @@ const World = () => {
   const groupRef = useRef()
 
   //runs on each frame run (based on framerate -need to account for variable FPS)
-  // useFrame((state, delta) => {
-  //   cubeRef.current.rotation.y += delta
-  //   groupRef.current.rotation.y -= delta * .5
-  // })
+  useFrame((state, delta) => {
+    cubeRef.current.rotation.y += delta
+    groupRef.current.rotation.y -= delta * .5
+  })
 
   // removed from mesh: rotation-y={Math.PI * 0.23} and rotation-x={- Math.PI * 0.5}
 
