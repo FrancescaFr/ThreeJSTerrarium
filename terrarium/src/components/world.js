@@ -1,9 +1,9 @@
 import { useRef } from 'react'
 // import { Canvas } from "@react-three/fiber"; // import everything from react-three
 // import { Camera, Group, Scene } from "@react-three/fiber";
-import { useFrame } from "@react-three/fiber"; //useThree, 
+// import { useFrame } from "@react-three/fiber"; //useThree, 
 // import { WebGLRenderer } from "@react-three/fiber"
-import { OrbitControls } from "@react-three/drei";
+// import { OrbitControls } from "@react-three/drei";
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // imports for our first scene
 // import {
@@ -27,9 +27,8 @@ const World = () => {
   //   groupRef.current.rotation.y -= delta * .5
   // })
 
-
   return <>
-    <OrbitControls />
+    {/* <OrbitControls /> */}
     <directionalLight position={[1, 2, 3]} intensity={.5} />
     <directionalLight intensity={.2} />
     <ambientLight intensity={0.2} />
