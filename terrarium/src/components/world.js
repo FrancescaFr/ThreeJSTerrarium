@@ -5,6 +5,7 @@ import { useRef } from 'react'
 // import { WebGLRenderer } from "@react-three/fiber"
 // import { OrbitControls } from "@react-three/drei";
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+// import {useLoader} from "@react-three/fiber"
 // imports for our first scene
 // import {
 //   BoxBufferGeometry,
