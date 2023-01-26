@@ -25,26 +25,29 @@ const World = () => {
   useFrame((state, delta) => {
 
     cubeRef.current.rotation.y += delta
-    groupRef.current.rotation.y -= delta * .1
+    groupRef.current.rotation.y -= delta * .5
 
   })
 
 
   return <>
     <OrbitControls />
+    <directionalLight position={[1, 2, 3]} intensity={.5} />
+    <directionalLight intensity={.2} />
+    <ambientLight intensity={0.2} />
     <group ref={groupRef}>
       <mesh position-x={-2}>
         <sphereGeometry />
-        <meshBasicMaterial color="orange" />
+        <meshStandardMaterial color="lightBlue" />
       </mesh>
       <mesh ref={cubeRef} position-x={2} scale={1.5} rotation-y={Math.PI * 0.23}>
         <boxGeometry scale={1.5} />
-        <meshBasicMaterial color="darkGreen" />
+        <meshStandardMaterial color="lightGreen" />
       </mesh>
     </group>
     <mesh position-y={-1} rotation-x={- Math.PI * 0.5} scale={10}>
       <planeGeometry />
-      <meshDepthMaterial color="black" />
+      <meshStandardMaterial color="pink" />
     </mesh>
   </>
 }
