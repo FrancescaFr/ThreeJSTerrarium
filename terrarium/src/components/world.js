@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 // import { Canvas } from "@react-three/fiber"; // import everything from react-three
 // import { Camera, Group, Scene } from "@react-three/fiber";
 import { useFrame } from "@react-three/fiber"; //useThree, 
@@ -22,6 +22,12 @@ const World = () => {
   const cubeRef = useRef()
   const groupRef = useRef()
 
+  //initialize object positions with use-effect
+  useEffect(() => {
+
+
+  }, []);
+
   //runs on each frame run (based on framerate -need to account for variable FPS)
   useFrame((state, delta) => {
     cubeRef.current.rotation.y += delta
@@ -40,7 +46,7 @@ const World = () => {
         <sphereGeometry />
         <meshStandardMaterial color="lightBlue" />
       </mesh>
-      <mesh ref={cubeRef} position-x={2} scale={1.5}>
+      <mesh ref={cubeRef} position-x={2} scale={1.5} rotation-y={Math.PI * 0.23}>
         <boxGeometry scale={1.5} />
         <meshStandardMaterial color="lightGreen" />
       </mesh>
