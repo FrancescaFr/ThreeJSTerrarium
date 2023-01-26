@@ -6,9 +6,9 @@ function App() {
   return (
     <div id="scene-container">
       <h1>Hello World</h1>
-      {/* <Canvas>
-        <World />
-      </Canvas> */}
+      <Canvas>
+        {/* <World /> */}
+      </Canvas>
     </div>
   );
 }
