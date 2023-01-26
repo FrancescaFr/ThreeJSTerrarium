@@ -28,6 +28,8 @@ const World = () => {
   //   groupRef.current.rotation.y -= delta * .5
   // })
 
+  // removed from mesh: rotation-y={Math.PI * 0.23} and rotation-x={- Math.PI * 0.5}
+
   return <>
     {/* <OrbitControls /> */}
     <directionalLight position={[1, 2, 3]} intensity={.5} />
@@ -38,12 +40,12 @@ const World = () => {
         <sphereGeometry />
         <meshStandardMaterial color="lightBlue" />
       </mesh>
-      <mesh ref={cubeRef} position-x={2} scale={1.5} rotation-y={Math.PI * 0.23}>
+      <mesh ref={cubeRef} position-x={2} scale={1.5}>
         <boxGeometry scale={1.5} />
         <meshStandardMaterial color="lightGreen" />
       </mesh>
     </group>
-    <mesh position-y={-1} rotation-x={- Math.PI * 0.5} scale={10}>
+    <mesh position-y={-1} scale={10}>
       <planeGeometry />
       <meshStandardMaterial color="pink" />
     </mesh>
