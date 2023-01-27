@@ -20,7 +20,7 @@ function App() {
 
     webgazer.setGazeListener((data, clock) => {
       console.log(data, clock);
-      webgazer.util.bound(data); // restricts prediction to the bounds of viewport
+      // webgazer.util.bound(data); // restricts prediction to the bounds of viewport
       var xPos = Math.floor(data.x)
       var yPos = Math.floor(data.y)
       setXposition(xPos);
