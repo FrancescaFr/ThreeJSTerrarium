@@ -22,7 +22,6 @@ const World = () => {
   const cubeRef = useRef()
   const groupRef = useRef()
 
-
   //runs on each frame run (based on framerate -need to account for variable FPS)
   useFrame((state, delta) => {
     cubeRef.current.rotation.y += delta
