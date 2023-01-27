@@ -4,28 +4,34 @@ import { Canvas } from '@react-three/fiber';
 import World from './components/world';
 import { useState, useEffect } from 'react';
 // import EyePrediction from './components/eyeprediction'
+const webgazer = window.webgazer //auto accessable from window
 
 
 
 function App() {
 
 
-  const [Xposition, setXposition] = useState();
-  const [Yposition, setYposition] = useState();
+  const [Xposition, setXposition] = useState(0);
+  const [Yposition, setYposition] = useState(0);
   const [gazeTracking, setGazeTracking] = useState(true);
 
   useEffect(() => {
-    const webgazer = window.webgazer //auto accessable from window
-    webgazer.setRegression("ridge"); // does not use clicks to calibrate
-
+    // webgazer.setRegression("ridge"); // does not use clicks to calibrate
+    // webgazer.clearData();
     webgazer.setGazeListener((data, clock) => {
-      console.log(data, clock);
-      // webgazer.util.bound(data); // restricts prediction to the bounds of viewport
-      var xPos = Math.floor(data.x)
-      var yPos = Math.floor(data.y)
-      setXposition(xPos);
-      setYposition(yPos);
-    }).begin()
+      try {
+        console.log(data, clock);
+        // webgazer.util.bound(data); // restricts prediction to the bounds of viewport
+        var xPos = Math.floor(data.x)
+        var yPos = Math.floor(data.y)
+        setXposition(xPos);
+        setYposition(yPos);
+      }
+      catch (err) { console.log('Could not start GazeListener') }
+    }).begin();
+    //pausing right after begin, then resuming via state prop seems to fix
+    //hangup issue on loading
+    webgazer.pause();
   }, []);
 
   // const getEyePrediction = () => {
