@@ -1,23 +1,32 @@
 import './App.css';
-// import  { useEffect, useState, useRef } from 'react';
+// < !-- < link rel = "icon" href = "%PUBLIC_URL%/favicon.ico" /> -->
 import { Canvas } from '@react-three/fiber';
 import World from './components/world';
+// import CalibrationButtons from './components/calibrationButtons';
 import { useState, useEffect } from 'react';
+import ExperimentWorld from './components/experimentWorld';
 // import EyePrediction from './components/eyeprediction'
 const webgazer = window.webgazer //auto accessable from window
 
-
-
 function App() {
-
-
   const [Xposition, setXposition] = useState(0);
   const [Yposition, setYposition] = useState(0);
   const [gazeTracking, setGazeTracking] = useState(true);
+  // TODO: Build Calibration Screen
+  // const [calibrationCount, setCalibrationCount] = useState(0);
+  // const [calibrated, setCalibrated] = useState(false);
+  // const clickCount = 1;
 
-  useEffect(() => {
-    // webgazer.setRegression("ridge"); // does not use clicks to calibrate
-    // webgazer.clearData();
+
+  const webgazerSetup = () => {
+    // TODO: Refine webgazer (calibration and continued monitoring)
+    webgazer.setRegression("weightedRidge"); // "ridge" does not use clicks to calibrate
+    webgazer.clearData();
+    // const constraints = {
+    //   video: {}
+    // }
+    // webgazer.setCameraConstraints(constraints)
+    webgazer.params.showVideo = false;
     webgazer.setGazeListener((data, clock) => {
       try {
         console.log(data, clock);
@@ -32,7 +41,7 @@ function App() {
     //pausing right after begin, then resuming via state prop seems to fix
     //hangup issue on loading
     webgazer.pause();
-  }, []);
+  }
 
   // const getEyePrediction = () => {
   //   EyePrediction()
@@ -48,16 +57,29 @@ function App() {
     setGazeTracking(!gazeTracking)
   }
 
+  useEffect(() => {
+    // webgazerSetup();
+
+  }, []);
+
+
+
+
   return (
     <div id="scene-container">
+      {/* <CalibrationButtons clickCount={clickCount} /> */}
       <div className="App-header">
         {/* <h1>Three JS Terrarium</h1> */}
-        <button onClick={webGazeStatus}>{gazeTracking ? `Pause Tracker` : `Resume Tracker`}</button>
-        <p> Eye Position: X = {Xposition} Y = {Yposition}</p>
+        <div> {/* WebGazer Controls */}
+          {/* <button onClick={webGazeStatus}>{gazeTracking ? `Pause Tracker` : `Resume Tracker`}</button> */}
+          {/* <p> Eye Position: X = {Xposition} Y = {Yposition}</p> */}
+        </div>
       </div>
-      <Canvas>
-        <World xPos={Xposition} yPos={Yposition} />
-      </Canvas>
+      {/* ThreeJS content */}
+
+      {/* <World xPos={Xposition} yPos={Yposition} /> */}
+      {/* <ExperimentWorld /> */}
+
     </div>
   );
 }
