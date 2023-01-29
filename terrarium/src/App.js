@@ -76,9 +76,10 @@ function App() {
         </div>
       </div>
       {/* ThreeJS content */}
-
-      {/* <World xPos={Xposition} yPos={Yposition} /> */}
-      {/* <ExperimentWorld /> */}
+      <Canvas>
+        {/* <World xPos={Xposition} yPos={Yposition} /> */}
+        <ExperimentWorld />
+      </Canvas>
 
     </div>
   );
