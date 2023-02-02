@@ -1,0 +1,8 @@
+#buttonContainer {
+    display: -moz-grid-group;
+    text-align: center;
+}
+
+button {
+    margin: .25em;
+}

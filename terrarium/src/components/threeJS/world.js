@@ -4,6 +4,8 @@ import { useRef } from 'react'
 import { useFrame } from "@react-three/fiber"; //useThree, 
 // import { WebGLRenderer } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei";
+// import CustomObject from './customObject';
+
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // import {useLoader} from "@react-three/fiber"
 // imports for our first scene
@@ -50,6 +52,7 @@ const World = () => {
       <planeGeometry />
       <meshStandardMaterial color="pink" />
     </mesh>
+    {/* <CustomObject /> */}
   </>
 }
 
