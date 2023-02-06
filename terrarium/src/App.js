@@ -1,51 +1,69 @@
 import './App.css';
-// import  { useEffect, useState, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
-import World from './components/threeJS/world';
-// import FaceLandmark from './components/tracking/faceLandmark';
-import { useState } from 'react';
-import WebGazerComponent from './components/tracking/webGazer';
-import EyePrediction from './components/tracking/eyeprediction'
+import { useState, useEffect } from 'react';
+
+import WorldView from './components/worldView';
+import CalibrationView from './components/calibrationView';
 
 function App() {
 
-  const [Xposition, setXposition] = useState(0);
-  const [Yposition, setYposition] = useState(0);
-  const [eyeRegion, setEyeRegion] = useState("undefined");
+  const [calibrate, setCalibrate] = useState(false)
+  const [userState, setUserState] = useState(true)
+  const [defaultEyeFeatures, setDefaultEyeFeatures] = useState(null)
 
-  // const [face, setFace] = useState(0);
-  // FaceLandmark();
+  const handleCalibrate = () => {
+    setCalibrate(!calibrate);
+  }
 
-  const setXhandler = (position) => { setXposition(position) };
-  const setYhandler = (position) => { setYposition(position) };
+  const handleUserState = () => {
+    //to be built out if authentication is implemented
+    setUserState(!userState)
+  }
 
-
-  // const getEyePrediction = () => {
-  //   EyePrediction()
-  //     .then(result => {
-  //       setEyePosition(result)
-  //     })
-
-  // };
-
-  // const getFace = () => {
-  //   setFace(face + 1);
-  // }
+  const handleDefaultEyeFeatures = (data) => {
+    setDefaultEyeFeatures(data)
+  }
 
   return (
-    <div id="scene-container">
+    <div className="App">
       <div className="App-header">
-        <h2>Three JS Terrarium</h2>
-        {/* <button onClick={getFace}>Update FaceApi Data</button> */}
-        {/* <FaceLandmark face={face} /> */}
-        <WebGazerComponent Xposition={Xposition} setXhandler={setXhandler} Yposition={Yposition} setYhandler={setYhandler} />
-        <EyePrediction Xposition={Xposition} Yposition={Yposition} eyeRegion={eyeRegion} setEyeRegion={setEyeRegion} />
       </div>
-      <Canvas>
-        <World xPos={Xposition} yPos={Yposition} />
-      </Canvas>
-    </div >
+      {/* run calibration page on start. once calibrated, display app*/}
+      <div className="page-view">
+        {calibrate ?
+          <WorldView
+            calibrate={calibrate}
+            handleCalibrate={handleCalibrate}
+            defaultEyeFeatures={defaultEyeFeatures}
+            userState={userState}
+            handleUserState={handleUserState} /> :
+          <CalibrationView
+            calibrate={calibrate}
+            handleCalibrate={handleCalibrate}
+            defaultEyeFeatures={defaultEyeFeatures}
+            handleDefaultEyeFeatures={handleDefaultEyeFeatures} />}
+      </div>
+    </div>
+
   );
 }
 
 export default App;
+
+
+// <div className="controls-container">
+// <button onClick={toggleTracker}>{tracker ? 'Start Facetracker' : 'Start Webgaze'}</button>
+// {/* <FaceLandmark face={face} tracker={tracker} /> */}
+// <WebGazerComponent
+//   Xposition={Xposition}
+//   setXhandler={setXhandler}
+//   Yposition={Yposition} setYhandler={setYhandler}
+//   tracker={tracker}
+//   eyeFeatures={eyeFeatures}
+//   setEyeFeatures={setEyeFeatures} />
+// <EyePrediction Xposition={Xposition} Yposition={Yposition} eyeRegion={eyeRegion} setEyeRegion={setEyeRegion} />
+// </div>
+// <div id="scene-container">
+// <Canvas>
+//   <World xPos={Xposition} yPos={Yposition} />
+// </Canvas>
+// </div >

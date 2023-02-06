@@ -1,8 +1,11 @@
 
 // import {} from @react-three/fiber
+import { useState } from 'react'
 
 
 const CustomObject = () => {
+  const [active, setActive] = useState(false);
+  const [hover, setHover] = useState(false);
 
   // ten trianges, three points each
   const verticesCount = 10 * 3
@@ -13,9 +16,17 @@ const CustomObject = () => {
 
   // for (let i = 0)
 
-  return <mesh>
-    <boxGeometry />
-    <meshBasicMaterial color="maroon" />
+  return <mesh onClick={() => {
+    setActive(!active);
+  }}
+    onPointerOver={() => {
+      setHover(true);
+    }}
+    onPointerOut={() => {
+      setHover(false);
+    }} scale={hover ? 1.5 : 1}>
+    <coneGeometry />
+    <meshBasicMaterial color={active || hover ? "yellow" : "maroon"} />
   </mesh>
 
 }

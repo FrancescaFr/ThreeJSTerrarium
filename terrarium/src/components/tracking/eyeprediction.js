@@ -18,7 +18,7 @@ const EyePrediction = (props) => {
     }
 
     //bottom of page
-    if (props.Yposition > 900) {
+    if (props.Yposition > 700) {
       setBottom(true)
     } else {
       setBottom(false)
@@ -31,7 +31,7 @@ const EyePrediction = (props) => {
       setLeft(false)
     }
     // right of page //
-    if (props.Yposition > 950) {
+    if (props.Xposition > 950) {
       setRight(true)
     } else {
       setRight(false)
@@ -58,13 +58,14 @@ const EyePrediction = (props) => {
       } else if (right) {
         props.setEyeRegion("RIGHT")
       } else {
-        props.setEyeRegion("Undefined")
+        props.setEyeRegion("CENTER")
       }
     }
 
     // corners ( top + )
-  }, [props.Xposition]);
 
+
+  }, [props.Xposition]);
 
 
   return (

@@ -4,7 +4,8 @@ import { useRef } from 'react'
 import { useFrame } from "@react-three/fiber"; //useThree, 
 // import { WebGLRenderer } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei";
-// import CustomObject from './customObject';
+import CustomObject from './customObject';
+// import { Physics, usePlane, useBox, useSphere } from '@react-three/cannon'
 
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // import {useLoader} from "@react-three/fiber"
@@ -23,6 +24,8 @@ const World = () => {
 
   const cubeRef = useRef()
   const groupRef = useRef()
+  // const [surfaceRef, gravityApi] = usePlane(() => ({ mass: 1 }));
+  // const [cubeRef, cubeApi] = useBox(() => ({ mass: 1 }));
 
   //runs on each frame run (based on framerate -need to account for variable FPS)
   useFrame((state, delta) => {
@@ -35,6 +38,7 @@ const World = () => {
   return <>
     {/* <PerformanceMonitor /> */}
     <OrbitControls />
+
     <directionalLight position={[1, 2, 3]} intensity={.5} />
     <directionalLight intensity={.2} />
     <ambientLight intensity={0.2} />
@@ -48,11 +52,11 @@ const World = () => {
         <meshStandardMaterial color="lightGreen" />
       </mesh>
     </group>
-    <mesh position-y={-1} scale={10} rotation-x={- Math.PI * 0.5}>
+    <mesh position-y={-1} scale={100} rotation-x={- Math.PI * 0.5}>
       <planeGeometry />
       <meshStandardMaterial color="pink" />
     </mesh>
-    {/* <CustomObject /> */}
+    <CustomObject />
   </>
 }
 

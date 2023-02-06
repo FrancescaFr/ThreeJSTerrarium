@@ -1,6 +1,20 @@
+
+#webGazeResults {
+    /* position: absolute; */
+    /* justify-items: right; */
+
+}
 #buttonContainer {
     display: -moz-grid-group;
     text-align: center;
+
+
+}
+
+#featureTracker {
+    display: inline-block;
+    left: 600px;
+    position: absolute;
 }
 
 button {
