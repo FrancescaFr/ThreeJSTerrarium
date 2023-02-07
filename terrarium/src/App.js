@@ -6,7 +6,7 @@ import WorldView from './components/worldView';
 
 function App() {
 
-  const [calibrate, setCalibrate] = useState(true)
+  const [calibrate, setCalibrate] = useState(false)
   const [userState, setUserState] = useState(true)
   const [defaultEyeFeatures, setDefaultEyeFeatures] = useState(null)
 
