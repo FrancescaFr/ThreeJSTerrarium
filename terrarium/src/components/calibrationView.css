@@ -1,4 +1,45 @@
-h1 {
+#view {
+    font-size: small;
     position: absolute;
     left: 500px;
+
+}
+
+.calibration-view {
+    background-color: skyblue;
+}
+
+.button-container { 
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    background-color: skyblue;
+    justify-content: space-around;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.cali-button {
+    /* height: 2em;
+    width: 20vw;
+    border-radius: 5%;
+    /* margin: 10vh; */
+    /* background-color: rgb(15, 7, 32); */ 
+  }
+
+.fullscreen-button {
+    font-size: larger;
+    background-color: brown;
+    height: 100vh;
+    width: 100vw;
+}
+
+.main-calibration-view {
+    position: absolute;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: skyblue;
 }

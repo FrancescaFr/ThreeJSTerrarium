@@ -1,18 +1,21 @@
 
 import './webGazer.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 
 const WebGazerComponent = (props) => {
 
   const webgazer = window.webgazer
-  webgazer.showVideo(false);
+  webgazer.showVideo(true);
   webgazer.showPredictionPoints(false)
 
   useEffect(() => {
     // webgazer.setRegression("ridge"); // does not use mouse move to calibrate
+    webgazer.removeMouseEventListeners();
+    webgazer.applyKalmanFilter(true);
     webgazer.setGazeListener(getGaze).begin();
     webgazer.removeMouseEventListeners();
+    console.log(webgazer.getRegression());
 
     // pausing right after begin, then resuming via state prop seems to fix
     // hangup issue on loading
@@ -23,6 +26,7 @@ const WebGazerComponent = (props) => {
   useEffect(() => {
     if (props.gazeTracking) {
       webgazer.resume()
+      webgazer.removeMouseEventListeners();
     } else {
       webgazer.pause()
     }
@@ -30,20 +34,23 @@ const WebGazerComponent = (props) => {
   }, [props.gazeTracking])
 
 
+  let xyCoord = null;
+  let localEyeFeatures = null;
+
   const getGaze = (data, clock) => {
     try {
       webgazer.util.bound(data); // restricts prediction to the bounds of viewport
       if (data !== null) {
         console.log(data, clock);
-        let xyCoord = [Math.floor(data.x), Math.floor(data.y)]
+        xyCoord = [Math.floor(data.x), Math.floor(data.y)]
         props.coordHandler(xyCoord);
-        props.handleEyeFeatures(data.eyeFeatures);
+        localEyeFeatures = data.eyeFeatures
+        props.handleEyeFeatures(localEyeFeatures);
 
       }
     }
     catch (err) { console.log('no data') }
   }
-
 
   return (
     <div id="webGazeResults">
@@ -51,9 +58,9 @@ const WebGazerComponent = (props) => {
         <button onClick={webGazeStatus}>{props.gazeTracking ? `Pause webgaze` : `Resume webgaze`}</button>
       </div> */}
       <div id="featureTracker">
-        <p> Gaze Position: X = {props.Xposition} Y = {props.Yposition}</p>
-        {props.eyeFeatures ? <p>Eye Features: Left Width = {props.eyeFeatures.left.width}</p> : null}
-        {props.eyeFeatures ? <p>Eye Features: Left Height = {props.eyeFeatures.left.height}</p> : null}
+        {xyCoord ? <p> Gaze Position: X = {xyCoord[0]} Y = {xyCoord[1]}</p> : null}
+        {localEyeFeatures ? <p>Eye Features: Left Width = {localEyeFeatures.left.width}</p> : null}
+        {localEyeFeatures ? <p>Eye Features: Left Height = {localEyeFeatures.left.height}</p> : null}
       </div>
     </div>
   )

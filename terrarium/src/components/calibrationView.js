@@ -1,32 +1,59 @@
+import * as React from 'react';
+import { useCallback } from 'react';
+import './calibrationView.css'
+import '../App.css'
 import { useEffect, useState } from "react";
+import { Box, Button, Card, CardContent, CardActions, Typography } from '@mui/material';
+import CalibrationButtons from './tracking/calibrationButtons';
 
+// import { styled } from '@mui/material/styles';
+// import Box from '@mui/material/Box';
+// import Paper from '@mui/material/Paper';
+// import Grid from '@mui/material/Grid';
 
 // Calibration view is intended to capture the following:
 // 1. Eye dimensions (pupil x & y) at "average distance" - use for camera zoom/pan reference
 // 2. Fine-Tune Gaze Model - use for camera rotation / selection
 
-
 export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, handleDefaultEyeFeatures }) {
-
   const webgazer = window.webgazer;
   const [clickCount, setClickCount] = useState(0);
-  const [faceCapture, setFaceCapture] = useState();
+  const [faceCapture, setFaceCapture] = useState(0);
+  const [webgazerState, setWebgazerState] = useState(false);
+  const [buttonVisibility, setbuttonVisibility] = useState(true)
+
 
   useEffect(() => {
     //start webgazer
-    webgazer.showVideo(true);
+    webgazer.showVideo(false);
     // webgazer.setCameraConstraints()
     webgazer.setVideoElementCanvas(getWebcam)
-    webgazer.setRegression("ridge"); // does not use clicks to calibrate
+    webgazer.setRegression("ridge"); // does not use movements to calibrate
+    webgazer.clearData();
     webgazer.setGazeListener(getGaze).begin();
-    webgazer.saveDataAcrossSessions(false);
+    //require calibration for each session
+    webgazer.saveDataAcrossSessions(true);
     // pausing right after begin, then resuming via state prop seems to fix
     // hangup issue on loading
     webgazer.pause();
-    //stop webgazer
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
+  const handleWebgazerState = (state) => {
+    setWebgazerState(state)
+  }
+
+  useEffect(() => {
+    if (webgazerState) {
+      webgazer.addMouseEventListeners();
+
+    } else {
+      webgazer.removeMouseEventListeners();
+
+    }
+  }, [webgazerState])
 
   async function getWebcam() {
     const constraints = {
@@ -38,7 +65,6 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
     const capture = await navigator.mediaDevices.getUserMedia(constraints);
     return capture;
   }
-
 
   const handleFaceCapture = () => {
     handleDefaultEyeFeatures(faceCapture);
@@ -65,17 +91,116 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
     // webgazer.setGlobalData();
     handleCalibrate();
   }
+  const handleButtonVisibility = (state) => {
+    setbuttonVisibility(state)
+  }
+
+  useEffect(() => {
+    if (clickCount === 0 || clickCount >= 12) {
+      webgazer.showVideo(true);
+      webgazer.showPredictionPoints(false);
+    }
+    if (clickCount === 0) {
+      handleButtonVisibility(true)
+    } else {
+      handleButtonVisibility(false)
+    }
+  }, [clickCount, webgazer])
+
+  const handleClickCount = () => {
+    setClickCount(clickCount + 1);
+  }
+
+
+  const clickMessage = 'click me!'
+
+  const startCalibration = () => {
+    handleClickCount();
+    handleWebgazerState(true);
+  }
+
+  const instructions1 = (
+    <React.Fragment>
+      <CardContent>
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          welcome to
+        </Typography>
+        <Typography variant="h2" component="div">
+          ThreeJS Terrarium
+        </Typography>
+        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+          For best results, this experience requires some calibration.
+        </Typography>
+        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+          To get started:
+        </Typography>
+        <Typography variant="body1">
+          1. Allow site to use Webcam (<b>no video will be recorded</b>)
+        </Typography>
+        <Typography variant="body1">
+          2. Position head so it is centered in the green viewport.
+        </Typography>
+        <Typography variant="body1">
+          3. Click Continue button to follow guided calibration steps.
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button onClick={startCalibration} style={clickCount > 0 ? { visibility: 'hidden' } : { visibility: 'visible' }}> Continue</Button>
+      </CardActions>
+    </React.Fragment >
+  )
+
+  const instructions2 = (
+    <React.Fragment>
+      <CardContent>
+
+        <Typography variant="h4" component="div">
+          Final Steps
+        </Typography>
+        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+          Lets get some baseline facial dimensions:
+        </Typography>
+        <Typography variant="body1">
+          1. Again, position head so it is centered in the green viewport.
+        </Typography>
+        <Typography variant="body1">
+          2. Make sure you are facing forward and are a natural distance from your screen.
+        </Typography>
+        <Typography variant="body1">
+          Click below to capture resting position face dimensions:
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button onClick={handleFaceCapture}>Capture Face Dims</Button>
+        {defaultEyeFeatures && <Button onClick={completeCalibration}><b>Click to start Terrarium</b></Button>}
+      </CardActions>
+    </React.Fragment >
+  )
 
   return (
-    <>
-      <h1> Calibration View</h1>
-      <div className="controls-container">
-        {/* <button onClick={setClickCount(clickCount + 1)}> Count {clickCount} </button> */}
-        <p>Window Width {window.innerWidth} Window Height {window.innerHeight}</p>
-        <button onClick={handleFaceCapture}>Capture Face Dims</button>
-        <button onClick={completeCalibration}>Calibrate</button>
-      </div>
-      <div className="button-grid">
-      </div>
-    </>)
+    <div >
+      {clickCount > 12 &&
+        <div className="main-calibration-view" >
+          <Box sx={{ minWidth: 275, boxShadow: 3, maxWidth: 600, margin: 3 }}>
+            <Card variant="outlined">{instructions2}</Card>
+          </Box>
+        </div>
+      }
+      {
+        buttonVisibility &&
+        <div className="main-calibration-view">
+          <Box sx={{ minWidth: 275, boxShadow: 3, maxWidth: 600, margin: 3 }}>
+            <Card variant="outlined">{instructions1}</Card>
+          </Box>
+        </div>
+      }
+      {
+        clickCount > 0 && <CalibrationButtons
+          clickCount={clickCount}
+          handleClickCount={handleClickCount}
+          clickMessage={clickMessage}
+          handleWebgazerState={handleWebgazerState} />
+      }
+
+    </div >)
 }

@@ -1,5 +1,26 @@
 h1 {
+    visibility: hidden;
     position: absolute;
     left: 500px;
     margin-top: 0%;
+}
+
+#fullscreen-button {
+    position: fixed;
+    top: 0%;
+    width: 15%;
+    left: 42.5%;
+    z-index: 1;
+    display: grid;
+}
+
+.controls-container{
+    position: fixed;
+    right: 0%;
+    z-index: 1;
+}
+
+
+#calibration-button {
+
 }
