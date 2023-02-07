@@ -20,31 +20,13 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
 
   const worldFullScreen = useFullScreenHandle();
 
-
-  const handleKeyDown = event => {
-    console.log(event.key);
-    if (event.key === "Escape") {
-      setFullScreenState(false);
-    }
-  };
-  //   const escFunction = (event)=> {
-  //     if (event.key === "Escape") {
-  //       setFullScreenState(false);
-  //     }
+  // still need to switch screen state button text when minimizing with escape key
+  // const handleKeyDown = event => {
+  //   console.log(event.key);
+  //   if (event.key === "Escape") {
+  //     setFullScreenState(false);
   //   }
-  //   const componentDidMount(){
-  //     document.addEventListener("keydown", this.escFunction, false);
-  //   }
-  //   const componentWillUnmount(){
-  //     document.removeEventListener("keydown", this.escFunction, false);
-  //   }
-  //   render(){
-  //     return (   
-  //       <input/>
-  //     )
-  //   }
-  // }
-
+  // };
 
   const coordHandler = (xycoord) => { setXYCoord(xycoord) };
 
@@ -103,7 +85,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
       gazeTracking={gazeTracking} />
     {/* <EyePrediction Xposition={xyCoord[0]} Yposition={xyCoord[1]} eyeRegion={eyeRegion} setEyeRegion={setEyeRegion} /> */}
     <FullScreen handle={worldFullScreen}>
-      <div id="scene-container" tabIndex={0} onKeyDown={handleKeyDown} >
+      <div id="scene-container">
         <Button id="fullscreen-button" onClick={handleFullScreen}>{fullScreenState ? 'Exit Full Screen' : 'Enter Full Screen'}</Button>
         <Canvas>
           <World xyCoord={xyCoord} defaultEyeFeatures={defaultEyeFeatures} eyeFeatures={eyeFeatures} />
