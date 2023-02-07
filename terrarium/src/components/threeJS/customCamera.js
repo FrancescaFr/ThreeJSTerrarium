@@ -30,8 +30,6 @@ export default function CustomCamera() {
     height: 600
   }
 
-
-
   return <>
 
     <orbitControls args={[camera, gl.domElement]} />

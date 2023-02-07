@@ -6,13 +6,14 @@ import { useEffect } from 'react';
 const WebGazerComponent = (props) => {
 
   const webgazer = window.webgazer
-  webgazer.showVideo(true);
-  webgazer.showPredictionPoints(false)
+
 
   useEffect(() => {
+    // webgazer.showVideo(false);
+    // webgazer.showPredictionPoints(false)
     // webgazer.setRegression("ridge"); // does not use mouse move to calibrate
-    webgazer.removeMouseEventListeners();
-    webgazer.applyKalmanFilter(true);
+    // webgazer.removeMouseEventListeners();
+    // webgazer.applyKalmanFilter(true);
     webgazer.setGazeListener(getGaze).begin();
     webgazer.removeMouseEventListeners();
     // pausing right after begin, then resuming via state prop seems to fix
@@ -20,6 +21,20 @@ const WebGazerComponent = (props) => {
     webgazer.pause();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (props.showFaceCapture) {
+      webgazer.showVideo(true);
+    } else {
+      webgazer.showVideo(false);
+    }
+    if (props.showPrediction) {
+      webgazer.showPredictionPoints(true)
+
+    } else {
+      webgazer.showPredictionPoints(false)
+    }
+  }, [props.showFaceCapture, props.showPrediction])
 
   useEffect(() => {
     if (props.gazeTracking) {

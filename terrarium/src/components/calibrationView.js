@@ -16,7 +16,7 @@ import CalibrationButtons from './tracking/calibrationButtons';
 
 export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, handleDefaultEyeFeatures }) {
   const webgazer = window.webgazer;
-  const [clickCount, setClickCount] = useState(10); // just for testing
+  const [clickCount, setClickCount] = useState(0); // just for testing
   const [faceCapture, setFaceCapture] = useState(0);
   const [webgazerState, setWebgazerState] = useState(false);
   const [buttonVisibility, setbuttonVisibility] = useState(true)
@@ -79,6 +79,8 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
       webgazer.util.bound(data); // restricts prediction to the bounds of viewport
       if (data !== null) {
         console.log(data, clock);
+        console.log("Inside of calibration View")
+
         setFaceCapture(data.eyeFeatures)
       }
     }
@@ -96,7 +98,7 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
   }
 
   useEffect(() => {
-    if (clickCount === 0 || clickCount >= 12) {
+    if (clickCount === 0 || clickCount >= 9) {
       webgazer.showVideo(true);
       webgazer.showPredictionPoints(false);
     }
@@ -179,7 +181,7 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
 
   return (
     <div >
-      {clickCount > 12 &&
+      {clickCount > 9 &&
         <div className="main-calibration-view" >
           <Box sx={{ minWidth: 275, boxShadow: 3, maxWidth: 600, margin: 3 }}>
             <Card variant="outlined">{instructions2}</Card>

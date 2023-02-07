@@ -34,15 +34,15 @@ const World = ({ xyCoord, defaultEyeFeatures, eyeFeatures }) => {
   // eye calculations:
   const headDistance = (defaultEyeFeatures.left.width - eyeFeatures.left.width) // distance increases when eye gets smaller
   // need to map x min/max to reasonable range
-  const Xmin = 400; // rightbound
-  const Xmax = 1600; // leftbound
+  const Xmin = 0; // rightbound
+  const Xmax = 600; // leftbound
   const Xrange = Xmax - Xmin // increments
   const Xavg = (defaultEyeFeatures.left.imagex + defaultEyeFeatures.right.imagex) / 2
   const XnormAvg = Xavg / Xrange // baseline (center)
   const Xcurrent = (eyeFeatures.left.imagex + eyeFeatures.right.imagex) / 2
   const XnormCurrent = ((Xcurrent / Xrange) - XnormAvg) * 2; // deviation from center (+left, -right), max = .5
   const Ymin = -100; // upperbound
-  const Ymax = 800; // lowerbound
+  const Ymax = 500; // lowerbound
   const Yrange = Ymax - Ymin // increments
   const Yavg = (defaultEyeFeatures.left.imagey + defaultEyeFeatures.right.imagey) / 2
   const YnormAvg = Yavg / Yrange // baseline (center)
@@ -53,10 +53,10 @@ const World = ({ xyCoord, defaultEyeFeatures, eyeFeatures }) => {
   useFrame((state, delta) => {
     // console.log('x normalized:', { XnormCurrent })
     // console.log('y normalized:', { YnormCurrent })
-    state.camera.fov = (75 + (headDistance / 5));
-    state.camera.zoom = 1 - (headDistance / 100)
-    state.camera.position.x = 1 - (XnormCurrent * 5);
-    state.camera.position.y = 1 - (YnormCurrent * 5);
+    state.camera.fov = (75 - (headDistance)); // decrease field of view (narrows like window)
+    state.camera.zoom = 1 - (headDistance / 25) //to compensate for fov (/75 obj. stay the same size) - (/25) to have actual zoom effect
+    state.camera.position.x = 1 - (XnormCurrent * 5); // shift side to side with head
+    state.camera.position.y = 1 - (YnormCurrent * 5); // shift up and down with head
     // cubeRef.current.rotation.y += delta
     // groupRef.current.rotation.y -= delta * .5
   })
@@ -67,7 +67,7 @@ const World = ({ xyCoord, defaultEyeFeatures, eyeFeatures }) => {
     {/* <PerformanceMonitor /> */}
     <OrbitControls />
     <directionalLight position={[1, 2, 3]} intensity={.5} />
-    <directionalLight intensity={.2} />
+    <directionalLight position={[-1, -3, 1]} intensity={1} />
     <ambientLight intensity={0.2} />
     <group ref={groupRef}>
       <mesh position-x={-2}>

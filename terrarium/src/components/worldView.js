@@ -13,7 +13,9 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const webgazer = window.webgazer;
   const [gazeTracking, setGazeTracking] = useState(true);
   const [webgazeData, setWebgazeData] = useState()
-  const [showData, setShowData] = useState();
+  const [showData, setShowData] = useState(false);
+  const [showFaceCapture, setShowFaceCapture] = useState(false);
+  const [showPrediction, setShowPrediction] = useState(false);
   const [xyCoord, setXYCoord] = useState();
   const [eyeFeatures, setEyeFeatures] = useState(defaultEyeFeatures);
   const [fullScreenState, setFullScreenState] = useState()
@@ -48,7 +50,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     setEyeFeatures(data);
   }
 
-  const showTrackingData = () => {
+  const handleTrackingData = () => {
     setShowData(!showData);
   }
 
@@ -67,7 +69,15 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     zoom: 1,
     near: 0.1,
     far: 200,
-    position: [1, 1, 1]
+    position: [1, 1, 10]
+  }
+
+  const handleFaceCapture = () => {
+    setShowFaceCapture(!showFaceCapture);
+  }
+
+  const handlePrediction = () => {
+    setShowPrediction(!showPrediction)
   }
 
 
@@ -76,7 +86,9 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     <div className="controls-container">
       <Button onClick={recalibrate}>Recalibrate</Button>
       <Button onClick={handleGazeTracking}>{gazeTracking ? `Pause webgaze` : `Resume webgaze`}</Button>
-      <Button onClick={showTrackingData}> {showData ? 'Hide Tracking Data' : 'Show Tracking Data'}</Button>
+      <Button onClick={handleFaceCapture}> {showFaceCapture ? 'Hide Face Capture' : 'Show Face Capture'}</Button>
+      <Button onClick={handlePrediction}> {showPrediction ? 'Hide Gaze Prediction' : 'Show Gaze Prediction'}</Button>
+      <Button onClick={handleTrackingData}> {showData ? 'Hide Tracking Data' : 'Show Tracking Data'}</Button>
       {showData ? <List elevation={2}>
         <ListItem><ListItemText>Gaze X: {xyCoord[0]} Y: {xyCoord[1]}</ListItemText></ListItem>
         <ListItem><ListItemText> Eye Size (Distance): {eyeFeatures.left.width}</ListItemText></ListItem>
@@ -87,6 +99,8 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     </div>
     <WebGazerComponent
       webgazeData={webgazeData}
+      showFaceCapture={showFaceCapture}
+      showPrediction={showPrediction}
       handleWebgazeData={handleWebgazeData}
       coordHandler={coordHandler}
       handleEyeFeatures={handleEyeFeatures}
