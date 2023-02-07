@@ -20,7 +20,7 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
   const [faceCapture, setFaceCapture] = useState(0);
   const [webgazerState, setWebgazerState] = useState(false);
   const [buttonVisibility, setbuttonVisibility] = useState(true)
-
+  const buttonCount = 9;
 
   useEffect(() => {
     //start webgazer
@@ -188,7 +188,7 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
 
   return (
     <div >
-      {clickCount > 9 &&
+      {clickCount > buttonCount &&
         <div className="main-calibration-view" >
           <Box sx={{ minWidth: 275, boxShadow: 3, maxWidth: 600, margin: 3 }}>
             <Card variant="outlined">{instructions2}</Card>
@@ -206,6 +206,7 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
       {
         clickCount > 0 && <CalibrationButtons
           clickCount={clickCount}
+          buttonCount={buttonCount}
           handleClickCount={handleClickCount}
           clickMessage={clickMessage}
           handleWebgazerState={handleWebgazerState} />

@@ -11,22 +11,39 @@ output object:
 */
 
 // TODO: need to apply Kalman Filtering
+// might want to create globally? so they don't lose calibration data?
+// Library Details: https://www.wouterbulten.nl/posts/lightweight-javascript-library-for-noise-filtering
+import KalmanFilter from "kalmanjs"
 
 
-async function EyePrediction(defaultEyeFeatures, eyeFeatures, XYCoord) {
+async function EyePrediction(defaultEyeFeatures, eyeFeatures, XYCoord, filterX, filterY) {
+
+  //toggle filtering
+  const filtering = false
+  // Kalman Filter parameters
+  const r = 0.001 // models system noise (negligible)
+  const q = 0.001 // models measurement noise (may be significant)
+  const a = 1.1 // models state effects (what we are trying to actually smooth is change btwn measurements)
+  // presuming that you will keep moving in same direction, applies growth
+
+  // create seperate filters for each axis
+  const kalmanFilterX = new KalmanFilter({ R: r, Q: q, A: a })
+  const kalmanFilterY = new KalmanFilter({ R: r, Q: q, A: a })
+  const kalmanFilterD = new KalmanFilter({ R: 0.001, Q: 4, A: 1 })
+
   const userPositionData = {}
 
-  userPositionData.head = await headCalculations(defaultEyeFeatures, eyeFeatures)
+  userPositionData.head = await headCalculations(defaultEyeFeatures, eyeFeatures, kalmanFilterX, kalmanFilterY, kalmanFilterD, filtering)
   userPositionData.gaze = await gazeCalculations(XYCoord)
   // console.log(userPositionData);
   return (userPositionData)
 
 }
 
-async function headCalculations(defaultEyeFeatures, eyeFeatures) {
+async function headCalculations(defaultEyeFeatures, eyeFeatures, kalmanFilterX, kalmanFilterY, kalmanFilterD, filtering, filterX, filterY) {
   // -Head Position Calculations:
   //distance currently defined relative to neutral head position eye width, not distance from screen
-  const headDistance = (defaultEyeFeatures.left.width - eyeFeatures.left.width) // distance increases when eye gets smaller
+  const headDistance = 1.00 * (defaultEyeFeatures.left.width - eyeFeatures.left.width) // distance increases when eye gets smaller
   // need to map x min/max to reasonable range
   const Xmin = 0; // rightbound
   const Xmax = 600; // leftbound
@@ -44,14 +61,24 @@ async function headCalculations(defaultEyeFeatures, eyeFeatures) {
   const YnormCurrent = ((Ycurrent / Yrange) - YnormAvg) * 2; // deviation from center (+down, -up), max = .5
   const decimels = 4; // precision
 
+  let filteredX = XnormCurrent;
+  let filteredY = YnormCurrent;
+  let filteredD = headDistance;
+  //filtered data
+  if (filtering) {
+    filteredX = kalmanFilterX.filter(XnormCurrent);
+    filteredY = kalmanFilterY.filter(YnormCurrent);
+    // filteredD = kalmanFilterD.filter(headDistance);
+  }
+
   return (
     {
       baseX: XnormAvg.toFixed(decimels),
       baseY: YnormAvg.toFixed(decimels),
-      x: XnormCurrent.toFixed(decimels),
-      y: YnormCurrent.toFixed(decimels),
+      x: filteredX.toFixed(decimels),
+      y: filteredY.toFixed(decimels),
       baseDist: 0,
-      dist: headDistance
+      dist: filteredD
     }
   )
 

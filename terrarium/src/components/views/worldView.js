@@ -8,6 +8,7 @@ import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import World from '../threeJS/world';
 import WebGazerData from '../tracking/webGazer';
 import EyePrediction from '../tracking/eyePrediction';
+import KalmanFilter from "kalmanjs";
 
 export default function WorldView({ calibrate, handleCalibrate, userState, handleUseState, defaultEyeFeatures }) {
   const webgazer = window.webgazer;
@@ -21,6 +22,34 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   // const [eyeRegion, setEyeRegion] = useState();
   const [fullScreenState, setFullScreenState] = useState()
   const [userPositionData, setUserPositionData] = useState()
+  // const [filterX, setFilterX] = useState()
+  // const [filterY, setFilterY] = useState()
+
+
+  // let filterX, filterY;
+
+  // async function setKalmanFilters() {
+  //   // Kalman Filter parameters
+  //   const r = 0.001 // models system noise (negligible)
+  //   const q = 0.001 // models measurement noise (may be significant)
+  //   const a = 1.1 // models state effects (what we are trying to actually smooth is change btwn measurements)
+  //   // presuming that you will keep moving in same direction, applies growth
+
+  //   // create seperate filters for each axis
+  //   const fX = new KalmanFilter({ R: r, Q: q, A: a })
+  //   const fY = new KalmanFilter({ R: r, Q: q, A: a })
+
+  //   console.log("fX: ", fX)
+  //   console.log("filter X", filterX)
+  //   return ("filters built")
+  // }
+
+  // useEffect(() => {
+  //   
+
+  // }, [])
+
+
 
   const worldFullScreen = useFullScreenHandle();
 
@@ -91,8 +120,17 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   // }, [])
 
   useEffect(() => {
+
+    // if (!filterX) {
+    //   const buildFilters = async () => {
+    //     const filterStatus = await setKalmanFilters();
+    //     console.log(filterStatus)
+    //   }
+    //   buildFilters().catch(console.error);
+    // }
+
     const getCurrentData = async () => {
-      const currentData = await EyePrediction(defaultEyeFeatures, eyeFeatures, xyCoord);
+      const currentData = await EyePrediction(defaultEyeFeatures, eyeFeatures, xyCoord, /*filterX, filterY*/);
       handleEyePrediction(currentData)
     }
     getCurrentData().catch(console.error);

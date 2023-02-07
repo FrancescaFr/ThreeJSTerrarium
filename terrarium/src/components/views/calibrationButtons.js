@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import { useEffect } from 'react';
 
-export default function CalibrationButtons({ clickCount, handleClickCount, clickMessage, handleWebgazerState }) {
+export default function CalibrationButtons({ clickCount, handleClickCount, clickMessage, handleWebgazerState, buttonCount }) {
   const calibrationFullScreen = useFullScreenHandle();
 
   // const [calibrated, setCalibrated] = useState(false);
@@ -28,15 +28,15 @@ export default function CalibrationButtons({ clickCount, handleClickCount, click
       </div>}
       <FullScreen handle={calibrationFullScreen}>
         <div className="button-container" >
-          <div className="cali-button" style={clickCount === 6 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>Three Left!</Button></div>
-          <div className="cali-button" style={clickCount === 2 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
-          <div className="cali-button" style={clickCount === 3 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
-          <div className="cali-button" style={clickCount === 4 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
-          <div className="cali-button" style={clickCount === 5 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
-          <div className="cali-button" style={clickCount === 1 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>Click Me to Start!</Button></div>
-          <div className="cali-button" style={clickCount === 7 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
-          <div className="cali-button" style={clickCount === 8 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
-          <div className="cali-button" style={clickCount === 9 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>Last One</Button></div>
+          <div style={clickCount === 6 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>Three Left!</Button></div>
+          <div style={clickCount === 2 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
+          <div style={clickCount === 3 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
+          <div style={clickCount === 4 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
+          <div style={clickCount === 5 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
+          <div style={clickCount === 1 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>Click Me to Start!</Button></div>
+          <div style={clickCount === 7 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
+          <div style={clickCount === 8 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>{clickMessage}</Button></div>
+          <div style={clickCount === 9 ? { visibility: 'visible' } : { visibility: 'hidden' }}><Button variant="contained" sx={buttonStyle} onClick={handleClickCount}>Last One</Button></div>
         </div>
       </FullScreen>
     </>)

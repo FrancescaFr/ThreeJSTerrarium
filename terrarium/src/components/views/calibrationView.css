@@ -14,7 +14,7 @@
     width: 100vw;
     height: 100vh;
     background-color: skyblue;
-    justify-content: space-evenly;
+    justify-content: space-between;
     gap: 10px;
     grid-template-columns: repeat(3, 1fr);
 }
