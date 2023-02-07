@@ -11,7 +11,6 @@ function App() {
   const [defaultEyeFeatures, setDefaultEyeFeatures] = useState(null)
   const webgazer = window.webgazer
 
-
   const handleCalibrate = () => {
     webgazer.end();
     setCalibrate(!calibrate);

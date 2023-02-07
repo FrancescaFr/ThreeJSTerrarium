@@ -1,6 +1,6 @@
 import './worldView.css'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import Button from '@mui/material/Button';
 import { List, ListItem, ListItemText } from '@mui/material'; //Item, Drawer, Menu, MenuItem, MenuList,
@@ -15,7 +15,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const [webgazeData, setWebgazeData] = useState()
   const [showData, setShowData] = useState();
   const [xyCoord, setXYCoord] = useState();
-  const [eyeFeatures, setEyeFeatures] = useState();
+  const [eyeFeatures, setEyeFeatures] = useState(defaultEyeFeatures);
   const [fullScreenState, setFullScreenState] = useState()
 
   const worldFullScreen = useFullScreenHandle();
@@ -62,10 +62,18 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     }
   }
 
+  const cameraSettings = {
+    fov: 45,
+    zoom: 1,
+    near: 0.1,
+    far: 200,
+    position: [1, 1, 1]
+  }
+
+
   return <div >
 
     <div className="controls-container">
-
       <Button onClick={recalibrate}>Recalibrate</Button>
       <Button onClick={handleGazeTracking}>{gazeTracking ? `Pause webgaze` : `Resume webgaze`}</Button>
       <Button onClick={showTrackingData}> {showData ? 'Hide Tracking Data' : 'Show Tracking Data'}</Button>
@@ -87,7 +95,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     <FullScreen handle={worldFullScreen}>
       <div id="scene-container">
         <Button id="fullscreen-button" onClick={handleFullScreen}>{fullScreenState ? 'Exit Full Screen' : 'Enter Full Screen'}</Button>
-        <Canvas>
+        <Canvas camera={cameraSettings}>
           <World xyCoord={xyCoord} defaultEyeFeatures={defaultEyeFeatures} eyeFeatures={eyeFeatures} />
         </Canvas>
       </div >

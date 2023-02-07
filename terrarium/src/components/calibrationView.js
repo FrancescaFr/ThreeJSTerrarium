@@ -16,7 +16,7 @@ import CalibrationButtons from './tracking/calibrationButtons';
 
 export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, handleDefaultEyeFeatures }) {
   const webgazer = window.webgazer;
-  const [clickCount, setClickCount] = useState(0);
+  const [clickCount, setClickCount] = useState(10); // just for testing
   const [faceCapture, setFaceCapture] = useState(0);
   const [webgazerState, setWebgazerState] = useState(false);
   const [buttonVisibility, setbuttonVisibility] = useState(true)
