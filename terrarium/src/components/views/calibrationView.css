@@ -14,18 +14,10 @@
     width: 100vw;
     height: 100vh;
     background-color: skyblue;
-    justify-content: space-around;
+    justify-content: space-evenly;
     gap: 10px;
     grid-template-columns: repeat(3, 1fr);
 }
-
-.cali-button {
-    /* height: 2em;
-    width: 20vw;
-    border-radius: 5%;
-    /* margin: 10vh; */
-    /* background-color: rgb(15, 7, 32); */ 
-  }
 
 .fullscreen-button {
     font-size: larger;

@@ -1,14 +1,14 @@
 import './App.css';
 import { React } from 'react'
 import { useState } from 'react';
-import CalibrationView from './components/calibrationView';
-import WorldView from './components/worldView';
+import CalibrationView from './components/views/calibrationView';
+import WorldView from './components/views/worldView';
 
 function App() {
 
   const [calibrate, setCalibrate] = useState(false)
   const [userState, setUserState] = useState(true)
-  const [defaultEyeFeatures, setDefaultEyeFeatures] = useState(null)
+  const [defaultEyeFeatures, setDefaultEyeFeatures] = useState()
   const webgazer = window.webgazer
 
   const handleCalibrate = () => {

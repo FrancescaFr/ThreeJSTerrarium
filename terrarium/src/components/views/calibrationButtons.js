@@ -1,5 +1,5 @@
 
-import '../calibrationView.css'
+import './calibrationView.css'
 import Button from '@mui/material/Button';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import { useEffect } from 'react';

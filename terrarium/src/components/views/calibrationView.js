@@ -1,9 +1,9 @@
 import * as React from 'react';
 import './calibrationView.css'
-import '../App.css'
+// import '../App.css'
 import { useEffect, useState } from "react";
 import { Box, Button, Card, CardContent, CardActions, Typography } from '@mui/material';
-import CalibrationButtons from './tracking/calibrationButtons';
+import CalibrationButtons from './calibrationButtons';
 
 // import { styled } from '@mui/material/styles';
 // import Box from '@mui/material/Box';
@@ -78,13 +78,13 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
     try {
       webgazer.util.bound(data); // restricts prediction to the bounds of viewport
       if (data !== null) {
-        console.log(data, clock);
+        // console.log(data, clock);
         console.log("Inside of calibration View")
 
         setFaceCapture(data.eyeFeatures)
       }
     }
-    catch (err) { console.log('no data') }
+    catch (err) { /*console.log('no data')*/ }
   }
 
   const completeCalibration = () => {
@@ -121,6 +121,11 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
     handleWebgazerState(true);
   }
 
+  const skipCalibration = () => {
+    setClickCount(10);
+    handleWebgazerState(true);
+  }
+
   const instructions1 = (
     <React.Fragment>
       <CardContent>
@@ -148,6 +153,8 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
       </CardContent>
       <CardActions>
         <Button onClick={startCalibration} style={clickCount > 0 ? { visibility: 'hidden' } : { visibility: 'visible' }}> Continue</Button>
+        <Button onClick={skipCalibration} style={clickCount > 0 ? { visibility: 'hidden' } : { visibility: 'visible' }}> Skip Calibration</Button>
+
       </CardActions>
     </React.Fragment >
   )

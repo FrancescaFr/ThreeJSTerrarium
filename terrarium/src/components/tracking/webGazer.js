@@ -3,7 +3,7 @@ import './webGazer.css';
 import { useEffect } from 'react';
 
 
-const WebGazerComponent = (props) => {
+const WebGazerData = (props) => {
 
   const webgazer = window.webgazer
 
@@ -34,6 +34,7 @@ const WebGazerComponent = (props) => {
     } else {
       webgazer.showPredictionPoints(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.showFaceCapture, props.showPrediction])
 
   useEffect(() => {
@@ -54,7 +55,7 @@ const WebGazerComponent = (props) => {
     try {
       webgazer.util.bound(data); // restricts prediction to the bounds of viewport
       if (data !== null) {
-        console.log(data, clock);
+        // console.log(data, clock);
         xyCoord = [Math.floor(data.x), Math.floor(data.y)]
         props.coordHandler(xyCoord);
         localEyeFeatures = data.eyeFeatures
@@ -70,14 +71,14 @@ const WebGazerComponent = (props) => {
       {/* <div id="buttonContainer">
         <button onClick={webGazeStatus}>{props.gazeTracking ? `Pause webgaze` : `Resume webgaze`}</button>
       </div> */}
-      <div id="featureTracker">
-        {xyCoord ? <p> Gaze Position: X = {xyCoord[0]} Y = {xyCoord[1]}</p> : null}
-        {localEyeFeatures ? <p>Eye Features: Left Width = {localEyeFeatures.left.width}</p> : null}
+      {/* <div id="featureTracker">
+        {xyCoord ? <p> Gaze Position: X = {xyCoord[0]} Y = {xyCoord[1]}</p> : <p>no XYCoord</p>}
+        {localEyeFeatures ? <p>Eye Features: Left Width = {localEyeFeatures.left.width}</p> : <p>no Eye Features </p>}
         {localEyeFeatures ? <p>Eye Features: Left Height = {localEyeFeatures.left.height}</p> : null}
-      </div>
+      </div> */}
     </div>
   )
 
 }
 
-export default WebGazerComponent;
+export default WebGazerData;

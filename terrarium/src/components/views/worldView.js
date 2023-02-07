@@ -5,9 +5,9 @@ import { Canvas } from '@react-three/fiber';
 import Button from '@mui/material/Button';
 import { List, ListItem, ListItemText } from '@mui/material'; //Item, Drawer, Menu, MenuItem, MenuList,
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
-import World from './threeJS/world';
-import WebGazerComponent from './tracking/webGazer';
-// import EyePrediction from './tracking/eyeprediction';
+import World from '../threeJS/world';
+import WebGazerData from '../tracking/webGazer';
+import EyePrediction from '../tracking/eyePrediction';
 
 export default function WorldView({ calibrate, handleCalibrate, userState, handleUseState, defaultEyeFeatures }) {
   const webgazer = window.webgazer;
@@ -18,7 +18,9 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const [showPrediction, setShowPrediction] = useState(false);
   const [xyCoord, setXYCoord] = useState();
   const [eyeFeatures, setEyeFeatures] = useState(defaultEyeFeatures);
+  // const [eyeRegion, setEyeRegion] = useState();
   const [fullScreenState, setFullScreenState] = useState()
+  const [userPositionData, setUserPositionData] = useState()
 
   const worldFullScreen = useFullScreenHandle();
 
@@ -79,9 +81,33 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const handlePrediction = () => {
     setShowPrediction(!showPrediction)
   }
+  const handleEyePrediction = (currentData) => {
+    setUserPositionData(currentData)
+  }
+  // let baseEyeFeatures;
+  // useEffect(() => {
+  //   console.log('default eye features: ', defaultEyeFeatures)
+  //   baseEyeFeatures = defaultEyeFeatures;
+  // }, [])
 
+  useEffect(() => {
+    const getCurrentData = async () => {
+      const currentData = await EyePrediction(defaultEyeFeatures, eyeFeatures, xyCoord);
+      handleEyePrediction(currentData)
+    }
+    getCurrentData().catch(console.error);
+
+  }, [defaultEyeFeatures, eyeFeatures, xyCoord])
 
   return <div >
+    <WebGazerData
+      webgazeData={webgazeData}
+      showFaceCapture={showFaceCapture}
+      showPrediction={showPrediction}
+      handleWebgazeData={handleWebgazeData}
+      coordHandler={coordHandler}
+      handleEyeFeatures={handleEyeFeatures}
+      gazeTracking={gazeTracking} />
 
     <div className="controls-container">
       <Button onClick={recalibrate}>Recalibrate</Button>
@@ -90,27 +116,21 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
       <Button onClick={handlePrediction}> {showPrediction ? 'Hide Gaze Prediction' : 'Show Gaze Prediction'}</Button>
       <Button onClick={handleTrackingData}> {showData ? 'Hide Tracking Data' : 'Show Tracking Data'}</Button>
       {showData ? <List elevation={2}>
-        <ListItem><ListItemText>Gaze X: {xyCoord[0]} Y: {xyCoord[1]}</ListItemText></ListItem>
-        <ListItem><ListItemText> Eye Size (Distance): {eyeFeatures.left.width}</ListItemText></ListItem>
-        <ListItem><ListItemText> Head X: {Math.floor((eyeFeatures.left.imagex + eyeFeatures.right.imagex) / 2)} </ListItemText></ListItem>
-        <ListItem><ListItemText> Head Y: {Math.floor((eyeFeatures.left.imagey + eyeFeatures.right.imagey) / 2)}</ListItemText> </ListItem>
+        <ListItem><ListItemText> Gaze (X: {userPositionData.gaze.x} Y: {userPositionData.gaze.y})</ListItemText></ListItem>
+        <ListItem><ListItemText>Region: {userPositionData.gaze.region}</ListItemText></ListItem>
+        <ListItem><ListItemText> Distance:  {userPositionData.head.dist}</ListItemText></ListItem>
+        <ListItem><ListItemText> Head (X: {userPositionData.head.x} Y: {userPositionData.head.y})</ListItemText></ListItem>
       </List> : null}
 
     </div>
-    <WebGazerComponent
-      webgazeData={webgazeData}
-      showFaceCapture={showFaceCapture}
-      showPrediction={showPrediction}
-      handleWebgazeData={handleWebgazeData}
-      coordHandler={coordHandler}
-      handleEyeFeatures={handleEyeFeatures}
-      gazeTracking={gazeTracking} />
+
+
     {/* <EyePrediction Xposition={xyCoord[0]} Yposition={xyCoord[1]} eyeRegion={eyeRegion} setEyeRegion={setEyeRegion} /> */}
     <FullScreen handle={worldFullScreen}>
       <div id="scene-container">
         <Button id="fullscreen-button" onClick={handleFullScreen}>{fullScreenState ? 'Exit Full Screen' : 'Enter Full Screen'}</Button>
         <Canvas camera={cameraSettings}>
-          <World xyCoord={xyCoord} defaultEyeFeatures={defaultEyeFeatures} eyeFeatures={eyeFeatures} />
+          <World userPositionData={userPositionData} xyCoord={xyCoord} defaultEyeFeatures={defaultEyeFeatures} eyeFeatures={eyeFeatures} />
         </Canvas>
       </div >
     </FullScreen>

@@ -1,90 +1,149 @@
-import { useState, useEffect } from 'react';
+/* This function is intended to smooth and simplify raw webgazer data to
+make it more usable for ThreeJS scene control.
 
-const EyePrediction = (props) => {
-  const [top, setTop] = useState(false);
-  const [bottom, setBottom] = useState(false);
-  const [left, setLeft] = useState(false);
-  const [right, setRight] = useState(false);
+Output includes:
+- Normalized and Kalman Filtered head position data (for camera movement)
+- Reduced resolution gaze data - error range of 100px, extraneous data unneccesary.
+- General Eye Gaze Region prediction based on gaze data.
+
+output object:
+  - Head Data
+*/
+
+// TODO: need to apply Kalman Filtering
 
 
+async function EyePrediction(defaultEyeFeatures, eyeFeatures, XYCoord) {
+  const userPositionData = {}
+
+  userPositionData.head = await headCalculations(defaultEyeFeatures, eyeFeatures)
+  userPositionData.gaze = await gazeCalculations(XYCoord)
+  // console.log(userPositionData);
+  return (userPositionData)
+
+}
+
+async function headCalculations(defaultEyeFeatures, eyeFeatures) {
+  // -Head Position Calculations:
+  //distance currently defined relative to neutral head position eye width, not distance from screen
+  const headDistance = (defaultEyeFeatures.left.width - eyeFeatures.left.width) // distance increases when eye gets smaller
+  // need to map x min/max to reasonable range
+  const Xmin = 0; // rightbound
+  const Xmax = 600; // leftbound
+  const Xrange = Xmax - Xmin // increments
+  const Xavg = (defaultEyeFeatures.left.imagex + defaultEyeFeatures.right.imagex) / 2
+  const XnormAvg = Xavg / Xrange // baseline (center)
+  const Xcurrent = (eyeFeatures.left.imagex + eyeFeatures.right.imagex) / 2
+  const XnormCurrent = ((Xcurrent / Xrange) - XnormAvg) * 2; // deviation from center (+left, -right), max = .5
+  const Ymin = -100; // upperbound
+  const Ymax = 500; // lowerbound
+  const Yrange = Ymax - Ymin // increments
+  const Yavg = (defaultEyeFeatures.left.imagey + defaultEyeFeatures.right.imagey) / 2
+  const YnormAvg = Yavg / Yrange // baseline (center)
+  const Ycurrent = (eyeFeatures.left.imagey + eyeFeatures.right.imagey) / 2
+  const YnormCurrent = ((Ycurrent / Yrange) - YnormAvg) * 2; // deviation from center (+down, -up), max = .5
+  const decimels = 4; // precision
+
+  return (
+    {
+      baseX: XnormAvg.toFixed(decimels),
+      baseY: YnormAvg.toFixed(decimels),
+      x: XnormCurrent.toFixed(decimels),
+      y: YnormCurrent.toFixed(decimels),
+      baseDist: 0,
+      dist: headDistance
+    }
+  )
+
+}
+
+
+async function gazeCalculations(XYCoord) {
   //TODO numbers should be converted to ratio of screen
+  const Xposition = Math.floor(XYCoord[0]);
+  const Yposition = Math.floor(XYCoord[1]);
+  let top, bottom, left, right, localEyeRegion
 
-  useEffect(() => {
-    // top of page
-    if (props.Yposition < 100) {
-      setTop(true);
+  // top of page
+  if (Yposition < 100) {
+    top = (true);
+  } else {
+    top = (false)
+  }
+
+  //bottom of page
+  if (Yposition > 700) {
+    bottom = (true)
+  } else {
+    bottom = (false)
+  }
+
+  // left of page
+  if (Xposition < 150) {
+    left = (true);
+  } else {
+    left = (false)
+  }
+  // right of page //
+  if (Xposition > 950) {
+    right = (true)
+  } else {
+    right = (false)
+  }
+
+  if (top) {
+    if (left) {
+      localEyeRegion = ("TOP LEFT")
+
+    } else if (right) {
+      localEyeRegion = ("TOP RIGHT")
+    } else
+      localEyeRegion = ("TOP")
+  } else if (bottom) {
+    if (left) {
+      localEyeRegion = ("BOTTOM LEFT")
+    } else if (right) {
+      localEyeRegion = ("BOTTOM RIGHT")
+    } else
+      localEyeRegion = ("BOTTOM")
+  } else {
+    if (left) {
+      localEyeRegion = ("LEFT")
+    } else if (right) {
+      localEyeRegion = ("RIGHT")
     } else {
-      setTop(false)
+      localEyeRegion = ("CENTER")
     }
-
-    //bottom of page
-    if (props.Yposition > 700) {
-      setBottom(true)
-    } else {
-      setBottom(false)
-    }
-
-    // left of page
-    if (props.Xposition < 150) {
-      setLeft(true);
-    } else {
-      setLeft(false)
-    }
-    // right of page //
-    if (props.Xposition > 950) {
-      setRight(true)
-    } else {
-      setRight(false)
-    }
-
-    if (top) {
-      if (left) {
-        props.setEyeRegion("TOP LEFT")
-
-      } else if (right) {
-        props.setEyeRegion("TOP RIGHT")
-      } else
-        props.setEyeRegion("TOP")
-    } else if (bottom) {
-      if (left) {
-        props.setEyeRegion("BOTTOM LEFT")
-      } else if (right) {
-        props.setEyeRegion("BOTTOM RIGHT")
-      } else
-        props.setEyeRegion("BOTTOM")
-    } else {
-      if (left) {
-        props.setEyeRegion("LEFT")
-      } else if (right) {
-        props.setEyeRegion("RIGHT")
-      } else {
-        props.setEyeRegion("CENTER")
-      }
-    }
-
-    // corners ( top + )
-
-
-  }, [props.Xposition]);
+  }
 
 
   return (
-    <p>Eye Prediction: {props.eyeRegion}</p>)
+    {
+      x: Xposition,
+      y: Yposition,
+      region: localEyeRegion
+    }
+  )
 
 }
 
 export default EyePrediction;
-// const webgazer = window.webgazer //auto accessable from window
 
-// var xPos = 0;
-// var yPos = 0;
 
-// const manualPrediction = async () => {
-//   const prediction = await webgazer.getCurrentPrediction();
-//   xPos = Math.floor(prediction.x);
-//   yPos = Math.floor(prediction.y);
-//   const eyePosition = [xPos, yPos]
+//final data object should look like:
 
-//   return (eyePosition)
-// };
-
+  // const userPositionData = {
+  //   head: {
+  //     baseX : XnormAvg,
+  //     baseY : YnormAvg,
+  //     x: XnormCurrent,
+  //     y: YnormCurrent,
+  //     baseDist : 0, // not being used right now
+  //     dist: headDistance
+  //   },
+  //   gaze: {
+  //     x: Xposition,
+  //     y: Yposition,
+  //     region: eyeRegion
+  //   },
+  // }
