@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useCallback } from 'react';
 import './calibrationView.css'
 import '../App.css'
 import { useEffect, useState } from "react";
@@ -53,6 +52,7 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
       webgazer.removeMouseEventListeners();
 
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webgazerState])
 
   async function getWebcam() {

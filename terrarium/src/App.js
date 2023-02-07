@@ -9,8 +9,11 @@ function App() {
   const [calibrate, setCalibrate] = useState(false)
   const [userState, setUserState] = useState(true)
   const [defaultEyeFeatures, setDefaultEyeFeatures] = useState(null)
+  const webgazer = window.webgazer
+
 
   const handleCalibrate = () => {
+    webgazer.end();
     setCalibrate(!calibrate);
   }
 

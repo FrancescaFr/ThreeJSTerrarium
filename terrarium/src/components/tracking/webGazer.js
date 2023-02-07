@@ -15,8 +15,6 @@ const WebGazerComponent = (props) => {
     webgazer.applyKalmanFilter(true);
     webgazer.setGazeListener(getGaze).begin();
     webgazer.removeMouseEventListeners();
-    console.log(webgazer.getRegression());
-
     // pausing right after begin, then resuming via state prop seems to fix
     // hangup issue on loading
     webgazer.pause();
