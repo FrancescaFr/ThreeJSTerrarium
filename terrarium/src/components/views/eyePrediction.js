@@ -6,44 +6,44 @@ Output includes:
 - Reduced resolution gaze data - error range of 100px, extraneous data unneccesary.
 - General Eye Gaze Region prediction based on gaze data.
 
-output object:
-  - Head Data
+final data object should look like:
+
+  const userPositionData = {
+    head: {
+      baseX : XnormAvg,
+      baseY : YnormAvg,
+      x: XnormCurrent,
+      y: YnormCurrent,
+      baseDist : 0, // not being used right now
+      dist: headDistance
+    },
+    gaze: {
+      x: Xposition,
+      y: Yposition,
+      region: eyeRegion
+    },
+  }
 */
 
-// TODO: need to apply Kalman Filtering
-// might want to create globally? so they don't lose calibration data?
-// Library Details: https://www.wouterbulten.nl/posts/lightweight-javascript-library-for-noise-filtering
-import KalmanFilter from "kalmanjs"
-
-
-async function EyePrediction(defaultEyeFeatures, eyeFeatures, XYCoord, filterX, filterY) {
-
-  //toggle filtering
-  const filtering = false
-  // Kalman Filter parameters
-  const r = 0.001 // models system noise (negligible)
-  const q = 0.001 // models measurement noise (may be significant)
-  const a = 1.1 // models state effects (what we are trying to actually smooth is change btwn measurements)
-  // presuming that you will keep moving in same direction, applies growth
-
-  // create seperate filters for each axis
-  const kalmanFilterX = new KalmanFilter({ R: r, Q: q, A: a })
-  const kalmanFilterY = new KalmanFilter({ R: r, Q: q, A: a })
-  const kalmanFilterD = new KalmanFilter({ R: 0.001, Q: 4, A: 1 })
+async function EyePrediction(defaultEyeFeatures, eyeFeatures, XYCoord) {
 
   const userPositionData = {}
 
-  userPositionData.head = await headCalculations(defaultEyeFeatures, eyeFeatures, kalmanFilterX, kalmanFilterY, kalmanFilterD, filtering)
+  userPositionData.head = await headCalculations(defaultEyeFeatures, eyeFeatures)
   userPositionData.gaze = await gazeCalculations(XYCoord)
   // console.log(userPositionData);
   return (userPositionData)
 
 }
 
-async function headCalculations(defaultEyeFeatures, eyeFeatures, kalmanFilterX, kalmanFilterY, kalmanFilterD, filtering, filterX, filterY) {
+async function headCalculations(defaultEyeFeatures, eyeFeatures) {
   // -Head Position Calculations:
   //distance currently defined relative to neutral head position eye width, not distance from screen
-  const headDistance = 1.00 * (defaultEyeFeatures.left.width - eyeFeatures.left.width) // distance increases when eye gets smaller
+  let headDistance = 1.00 * (defaultEyeFeatures.left.width - eyeFeatures.left.width) // distance increases when eye gets smaller
+  const neutralStablePoint = 5; // define range in which zoom does not change (reduce jitter effect for neutral position)
+  if (headDistance < neutralStablePoint && headDistance > -(2)) {
+    headDistance = 0;
+  }
   // need to map x min/max to reasonable range
   const Xmin = 0; // rightbound
   const Xmax = 600; // leftbound
@@ -59,26 +59,16 @@ async function headCalculations(defaultEyeFeatures, eyeFeatures, kalmanFilterX, 
   const YnormAvg = Yavg / Yrange // baseline (center)
   const Ycurrent = (eyeFeatures.left.imagey + eyeFeatures.right.imagey) / 2
   const YnormCurrent = ((Ycurrent / Yrange) - YnormAvg) * 2; // deviation from center (+down, -up), max = .5
-  const decimels = 4; // precision
-
-  let filteredX = XnormCurrent;
-  let filteredY = YnormCurrent;
-  let filteredD = headDistance;
-  //filtered data
-  if (filtering) {
-    filteredX = kalmanFilterX.filter(XnormCurrent);
-    filteredY = kalmanFilterY.filter(YnormCurrent);
-    // filteredD = kalmanFilterD.filter(headDistance);
-  }
+  const decimels = 3; // precision
 
   return (
     {
       baseX: XnormAvg.toFixed(decimels),
       baseY: YnormAvg.toFixed(decimels),
-      x: filteredX.toFixed(decimels),
-      y: filteredY.toFixed(decimels),
+      x: XnormCurrent.toFixed(decimels),
+      y: YnormCurrent.toFixed(decimels),
       baseDist: 0,
-      dist: filteredD
+      dist: headDistance,
     }
   )
 
@@ -157,20 +147,3 @@ async function gazeCalculations(XYCoord) {
 export default EyePrediction;
 
 
-//final data object should look like:
-
-  // const userPositionData = {
-  //   head: {
-  //     baseX : XnormAvg,
-  //     baseY : YnormAvg,
-  //     x: XnormCurrent,
-  //     y: YnormCurrent,
-  //     baseDist : 0, // not being used right now
-  //     dist: headDistance
-  //   },
-  //   gaze: {
-  //     x: Xposition,
-  //     y: Yposition,
-  //     region: eyeRegion
-  //   },
-  // }

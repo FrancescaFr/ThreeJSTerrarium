@@ -24,7 +24,7 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
 
   useEffect(() => {
     //start webgazer
-    webgazer.showVideo(false);
+    webgazer.showVideo(true);
     // webgazer.setCameraConstraints()
     webgazer.setVideoElementCanvas(getWebcam)
     webgazer.setRegression("ridge"); // does not use movements to calibrate

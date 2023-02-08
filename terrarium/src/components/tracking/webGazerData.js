@@ -1,5 +1,5 @@
 
-import './webGazer.css';
+import './webGazerData.css';
 import { useEffect } from 'react';
 
 
@@ -9,7 +9,7 @@ const WebGazerData = (props) => {
 
 
   useEffect(() => {
-    // webgazer.showVideo(false);
+    webgazer.showVideo(false);
     // webgazer.showPredictionPoints(false)
     // webgazer.setRegression("ridge"); // does not use mouse move to calibrate
     // webgazer.removeMouseEventListeners();
@@ -26,7 +26,9 @@ const WebGazerData = (props) => {
     if (props.showFaceCapture) {
       webgazer.showVideo(true);
     } else {
+      webgazer.begin();
       webgazer.showVideo(false);
+
     }
     if (props.showPrediction) {
       webgazer.showPredictionPoints(true)
@@ -49,7 +51,6 @@ const WebGazerData = (props) => {
 
 
   let xyCoord = null;
-  let localEyeFeatures = null;
 
   const getGaze = (data, clock) => {
     try {
@@ -58,12 +59,11 @@ const WebGazerData = (props) => {
         // console.log(data, clock);
         xyCoord = [Math.floor(data.x), Math.floor(data.y)]
         props.coordHandler(xyCoord);
-        localEyeFeatures = data.eyeFeatures
+        const localEyeFeatures = data.eyeFeatures
         props.handleEyeFeatures(localEyeFeatures);
 
       }
-    }
-    catch (err) { console.log('no data') }
+    } catch (err) { console.log("getGaze", err) }
   }
 
   return (

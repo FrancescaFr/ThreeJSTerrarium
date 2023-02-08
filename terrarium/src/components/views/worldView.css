@@ -7,9 +7,11 @@ h1 {
 
 #fullscreen-button {
     position: fixed;
+    /* text-shadow: 2px 2px 2px black; */
+    /* background-color: rgba(12, 17, 17, 0.345); */
     top: 0%;
-    width: 15%;
-    left: 42.5%;
+    width: 20%;
+    left: 40%;
     z-index: 1;
     display: grid;
 }
