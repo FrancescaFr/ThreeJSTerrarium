@@ -7,7 +7,7 @@ import { List, ListItem, ListItemText } from '@mui/material'; //Item, Drawer, Me
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import World from '../threeJS/world';
 import WebGazerData from '../tracking/webGazer';
-import EyePrediction from '../tracking/eyePrediction';
+import EyePrediction from './eyePrediction';
 import KalmanFilter from "kalmanjs";
 
 export default function WorldView({ calibrate, handleCalibrate, userState, handleUseState, defaultEyeFeatures }) {
