@@ -4,10 +4,6 @@ import { useFrame } from '@react-three/fiber';
 import { useState, useRef } from 'react'
 
 
-
-
-
-
 const CustomObject = () => {
 
 

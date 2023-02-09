@@ -33,6 +33,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const [fullScreenState, setFullScreenState] = useState();
   const [userPositionData, setUserPositionData] = useState();
   const [filtering, setFiltering] = useState(false);
+  const [playerState, setPlayerState] = useState(false)
 
 
   const worldFullScreen = useFullScreenHandle();
@@ -85,6 +86,10 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     }
   }
 
+  const handlePlayerState = () => {
+    setPlayerState(!playerState)
+  }
+
   useEffect(() => {
 
     // if (!filterX) {
@@ -116,7 +121,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     <div className="controls-container">
       <Button onClick={recalibrate}>Recalibrate</Button>
       <Button onClick={handleGazeTracking}>{gazeTracking ? `Pause webgaze` : `Resume webgaze`}</Button>
-      <Button onClick={handleFiltering}>{filtering ? `Disable Kalman Filter` : `Enable Kalman ilter`}</Button>
+      <Button onClick={handleFiltering}>{filtering ? `Disable Kalman Filter` : `Enable Kalman Filter`}</Button>
       <Button onClick={handleFaceCapture}> {showFaceCapture ? 'Hide Face Capture' : 'Show Face Capture'}</Button>
       <Button onClick={handlePrediction}> {showPrediction ? 'Hide Gaze Prediction' : 'Show Gaze Prediction'}</Button>
       <Button onClick={handleTrackingData}> {showData ? 'Hide Tracking Data' : 'Show Tracking Data'}</Button>
@@ -131,7 +136,10 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
 
     <FullScreen handle={worldFullScreen}>
       <div id="scene-container">
-        <Button id="fullscreen-button" onClick={handleFullScreen}>{fullScreenState ? 'Exit Full Screen' : 'Enter Full Screen'}</Button>
+        <div id="fullscreen-buttons">
+          <Button className="fs-button" onClick={handlePlayerState}>{playerState ? 'Escape Snail' : null}</Button>
+          <Button className="fs-button" onClick={handleFullScreen}>{fullScreenState ? 'Exit Full Screen' : 'Enter Full Screen'}</Button>
+        </div>
         {/* <KeyboardControls
           map={[
             { name: "forward", keys: ["ArrowUp", "w", "W"] },
@@ -141,7 +149,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
             { name: "jump", keys: ["Space"] },
           ]}> */}
         <Canvas>
-          <World userPositionData={userPositionData} xyCoord={xyCoord} defaultEyeFeatures={defaultEyeFeatures} eyeFeatures={eyeFeatures} />
+          <World userPositionData={userPositionData} xyCoord={xyCoord} defaultEyeFeatures={defaultEyeFeatures} eyeFeatures={eyeFeatures} playerState={playerState} handlePlayerState={handlePlayerState} />
           {/* <PointerLockControls /> */}
         </Canvas>
         {/* </KeyboardControls> */}

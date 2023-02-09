@@ -5,15 +5,22 @@ h1 {
     margin-top: 0%;
 }
 
-#fullscreen-button {
+#fullscreen-buttons {
     position: fixed;
-    /* text-shadow: 2px 2px 2px black; */
-    /* background-color: rgba(12, 17, 17, 0.345); */
+    background-color: rgba(140, 244, 230, 0.564);
     top: 0%;
+    margin-top: -.25em;
     width: 20%;
     left: 40%;
     z-index: 1;
     display: grid;
+    grid: 1fr 1fr;
+    /* justify-content: center; */
+
+
+}
+.fs-button {
+    /* text-shadow: 1px 1px 1.5px rgb(0, 0, 0); */
 }
 
 .controls-container{
