@@ -28,3 +28,13 @@ h1 {
     right: 0%;
     z-index: 1;
 }
+
+#filter-slider {
+    position: relative;
+    /* width: 150; */
+    /* right: 10%; */
+    margin-left: 10%;
+    margin-right: 10%;
+    /* display: flex; */
+    align-items: center;
+}

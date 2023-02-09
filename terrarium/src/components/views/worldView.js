@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 // import { KeyboardControls, PointerLockControls } from '@react-three/drei';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import { List, ListItem, ListItemText } from '@mui/material'; //Item, Drawer, Menu, MenuItem, MenuList,
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 import World from '../threeJS/world';
@@ -11,14 +12,7 @@ import WebGazerData from '../tracking/webGazerData';
 import EyePrediction from './eyePrediction';
 
 import KalmanFilter from "kalmanjs";
-// Library Details: https://www.wouterbulten.nl/posts/lightweight-javascript-library-for-noise-filtering
-// Kalman Filter parameters
-const r = 0.001 // models system noise (negligible)
-const q = 0.001 // models measurement noise (may be significant)
-const a = 1.05 // models state effects (what we are trying to actually smooth is change btwn measurements)
-// presuming that you will keep moving in same direction, applies growth
-const fX = (new KalmanFilter({ R: r, Q: q, A: a }))
-const fY = (new KalmanFilter({ R: r, Q: q, A: a }))
+import FilterSlider from './filterSlider';
 
 
 export default function WorldView({ calibrate, handleCalibrate, userState, handleUseState, defaultEyeFeatures }) {
@@ -34,7 +28,33 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const [userPositionData, setUserPositionData] = useState();
   const [filtering, setFiltering] = useState(false);
   const [playerState, setPlayerState] = useState(false)
+  const [r, setR] = useState(0.0001); //might not update
+  const [q, setQ] = useState(0.02);
+  const [a, setA] = useState(0.95);
+  const [fX, setFx] = useState(new KalmanFilter({ R: r, Q: q, A: a }))
+  const [fY, setFy] = useState(new KalmanFilter({ R: r, Q: q, A: a }))
+  const [fD, setFd] = useState(new KalmanFilter({ R: r, Q: q, A: a }))
 
+  // kalman filters seem connected.....
+
+  // let fX = (new KalmanFilter({ R: r, Q: q, A: a }))
+  // let fY = (new KalmanFilter({ R: r, Q: q, A: a }))
+  // let fD = (new KalmanFilter({ R: r, Q: q, A: a }))
+
+  // Library Details: https://www.wouterbulten.nl/posts/lightweight-javascript-library-for-noise-filtering
+  // Kalman Filter parameters
+  // let r = 0.0001 // models system noise (negligible)
+  // let q = 0.02 // models measurement noise (may be significant)
+  // let a = 0.95 // models state effects (what we are trying to actually smooth is change btwn measurements)
+  // <1 applies dampening effect (less jittery/less responsive to movement)
+
+  const updateFilters = () => {
+    setFx(new KalmanFilter({ R: r, Q: q, A: a }));
+    setFy(new KalmanFilter({ R: r, Q: q, A: a }));
+    setFd(new KalmanFilter({ R: r, Q: q, A: a }));
+  }
+
+  useEffect(() => { updateFilters() }, [a, r, q]);
 
   const worldFullScreen = useFullScreenHandle();
 
@@ -64,8 +84,9 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
 
   const handleEyePrediction = (currentData) => {
     if (filtering) {
-      currentData.head.x = fX.filter(currentData.head.x).toFixed(3)
-      currentData.head.y = fX.filter(currentData.head.y).toFixed(3)
+      currentData.head.x = fX.filter(currentData.head.x).toFixed(4)
+      currentData.head.y = fY.filter(currentData.head.y).toFixed(4)
+      currentData.head.dist = fD.filter(currentData.head.dist).toFixed(3)
     }
     setUserPositionData(currentData)
   };
@@ -92,22 +113,14 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
 
   useEffect(() => {
 
-    // if (!filterX) {
-    //   const buildFilters = async () => {
-    //     const filterStatus = await setKalmanFilters();
-    //     console.log(filterStatus)
-    //   }
-    //   buildFilters().catch(console.error);
-    // }
-
     const getCurrentData = async () => {
-      const currentData = await EyePrediction(defaultEyeFeatures, eyeFeatures, xyCoord, filtering, fX, fY);
+      const currentData = await EyePrediction(defaultEyeFeatures, eyeFeatures, xyCoord);
       handleEyePrediction(currentData)
     }
     getCurrentData().catch(console.error);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultEyeFeatures, eyeFeatures, xyCoord, fX, fY])
+  }, [defaultEyeFeatures, eyeFeatures, xyCoord])
 
   return <div >
     <WebGazerData
@@ -119,18 +132,23 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
       handleEyeFeatures={handleEyeFeatures}
       gazeTracking={gazeTracking} />
     <div className="controls-container">
-      <Button onClick={recalibrate}>Recalibrate</Button>
-      <Button onClick={handleGazeTracking}>{gazeTracking ? `Pause webgaze` : `Resume webgaze`}</Button>
-      <Button onClick={handleFiltering}>{filtering ? `Disable Kalman Filter` : `Enable Kalman Filter`}</Button>
-      <Button onClick={handleFaceCapture}> {showFaceCapture ? 'Hide Face Capture' : 'Show Face Capture'}</Button>
-      <Button onClick={handlePrediction}> {showPrediction ? 'Hide Gaze Prediction' : 'Show Gaze Prediction'}</Button>
-      <Button onClick={handleTrackingData}> {showData ? 'Hide Tracking Data' : 'Show Tracking Data'}</Button>
-      {showData ? <List elevation={2}>
-        <ListItem><ListItemText> Gaze (X: {userPositionData.gaze.x} Y: {userPositionData.gaze.y})</ListItemText></ListItem>
-        <ListItem><ListItemText>Eye Region: {userPositionData.gaze.region}</ListItemText></ListItem>
-        <ListItem><ListItemText> Distance:  {userPositionData.head.dist}</ListItemText></ListItem>
-        <ListItem><ListItemText> Head (X: {userPositionData.head.x} Y: {userPositionData.head.y})</ListItemText></ListItem>
-      </List> : null}
+      <Box>
+        <Button onClick={recalibrate}>Recalibrate</Button>
+        <Button onClick={handleGazeTracking}>{gazeTracking ? `Pause webgaze` : `Resume webgaze`}</Button>
+        <Button onClick={handleFiltering}>{filtering ? `Disable Kalman Filter` : `Enable Kalman Filter`}</Button>
+        <Box sx={{}} id="filter-slider">
+          {filtering ? <FilterSlider q={q} setQ={setQ} a={a} setA={setA} /> : null}
+        </Box>
+        <Button onClick={handleFaceCapture}> {showFaceCapture ? 'Hide Face Capture' : 'Show Face Capture'}</Button>
+        <Button onClick={handlePrediction}> {showPrediction ? 'Hide Gaze Prediction' : 'Show Gaze Prediction'}</Button>
+        <Button onClick={handleTrackingData}> {showData ? 'Hide Tracking Data' : 'Show Tracking Data'}</Button>
+        {showData ? <List elevation={2}>
+          <ListItem><ListItemText> Gaze (X: {userPositionData.gaze.x} Y: {userPositionData.gaze.y})</ListItemText></ListItem>
+          <ListItem><ListItemText>Eye Region: {userPositionData.gaze.region}</ListItemText></ListItem>
+          <ListItem><ListItemText> Distance:  {userPositionData.head.dist}</ListItemText></ListItem>
+          <ListItem><ListItemText> Head (X: {userPositionData.head.x} Y: {userPositionData.head.y})</ListItemText></ListItem>
+        </List> : null}
+      </Box>
     </div>
 
 

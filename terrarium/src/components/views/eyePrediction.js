@@ -2,7 +2,7 @@
 make it more usable for ThreeJS scene control.
 
 Output includes:
-- Normalized and Kalman Filtered head position data (for camera movement)
+- Normalized head position data (for camera movement)
 - Reduced resolution gaze data - error range of 100px, extraneous data unneccesary.
 - General Eye Gaze Region prediction based on gaze data.
 
@@ -40,11 +40,11 @@ async function headCalculations(defaultEyeFeatures, eyeFeatures) {
   // -Head Position Calculations:
   //distance currently defined relative to neutral head position eye width, not distance from screen
   let headDistance = 1.00 * (defaultEyeFeatures.left.width - eyeFeatures.left.width) // distance increases when eye gets smaller
-  const neutralStablePoint = 5; // define range in which zoom does not change (reduce jitter effect for neutral position)
-  if (headDistance < neutralStablePoint && headDistance > -(2)) {
-    headDistance = 0;
-  }
-  // need to map x min/max to reasonable range
+  // const neutralStablePoint = 5; // define range in which zoom does not change (reduce jitter effect for neutral position without filtering)
+  // if (headDistance < neutralStablePoint && headDistance > -(2)) {
+  //   headDistance = 0;
+  // }
+  // TODO need to map x min/max to reasonable range
   const Xmin = 0; // rightbound
   const Xmax = 600; // leftbound
   const Xrange = Xmax - Xmin // increments
@@ -132,7 +132,6 @@ async function gazeCalculations(XYCoord) {
       localEyeRegion = ("CENTER")
     }
   }
-
 
   return (
     {

@@ -25,7 +25,7 @@ export default function Snail(props) {
   })
 
   return (
-    <group {...props} ref={snailRef} dispose={null} scale={0.001} visible={!props.playerState} onClick={() => {
+    <group {...props} ref={snailRef} dispose={null} scale={0.002} visible={!props.playerState} onClick={() => {
       setActive(!active);
       props.handlePlayerState();
     }}

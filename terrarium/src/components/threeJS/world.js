@@ -12,13 +12,11 @@ import Lights from './Scene/Lights/index';
 // ------------- Object model imports ------------
 import Table from './objects/table'
 import Seat from './objects/seat'
-import Crustaceo from './objects/crustaceo';
 import Snail from './objects/gardensnail';
-import { DEG2RAD, degToRad } from 'three/src/math/MathUtils';
-import { Euler } from 'three';
+import { degToRad } from 'three/src/math/MathUtils';
 
 
-const World = ({ xyCoord, defaultEyeFeatures, eyeFeatures, userPositionData, playerState, handlePlayerState }) => {
+const World = ({ userPositionData, playerState, handlePlayerState }) => {
   const floorColorMap = useTexture({ map: 'textures/wood-texture-wild-hardwood-e68adc3402684d76a8f36b4238aaeda4.jpg' })
 
 
@@ -42,9 +40,11 @@ const World = ({ xyCoord, defaultEyeFeatures, eyeFeatures, userPositionData, pla
       state.camera.fov = (75 - (userPositionData.head.dist)); // decrease field of view (narrows like window)
       state.camera.zoom = 1 - (userPositionData.head.dist / 25) //to compensate for fov (/75 obj. stay the same size) - (/25) to have actual zoom effect
       // state.camera.position.z = 2 + (userPositionData.head.dist / 50)
-      state.camera.position.x = 1 - (userPositionData.head.x * 5); // shift side to side with head
-      state.camera.position.y = 0.5 - (userPositionData.head.y * 5);  // shift up and down with head
+      state.camera.position.x = 1 - (userPositionData.head.x * 20); // shift side to side with head
+      state.camera.position.y = 0 - (userPositionData.head.y * 20);  // shift up and down with head
       state.camera.position.z = 2;
+      // state.camera.rotateX(0)
+      // state.camera.rotateY(0)
       // set z position by keyboard
       // state.camera.position.z = 
     }
@@ -69,7 +69,7 @@ const World = ({ xyCoord, defaultEyeFeatures, eyeFeatures, userPositionData, pla
   return <>
     {/* <PerformanceMonitor /> */}
     {/* <color attach="background" args={["black"]} /> */}
-    <PerspectiveCamera makeDefault fov={45} zoom={1} near={0.1} far={200} position={[1, 0.5, 2]} />
+    <PerspectiveCamera makeDefault fov={45} zoom={1} near={0.1} far={200} position={[1, 0, 2]} />
     <OrbitControls />
     {/* TODO  - Add custom high res skybox from generated images (Gan360) */}
     <Environment
