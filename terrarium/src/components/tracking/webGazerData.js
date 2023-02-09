@@ -13,8 +13,9 @@ const WebGazerData = (props) => {
     // webgazer.showPredictionPoints(false)
     // webgazer.setRegression("ridge"); // does not use mouse move to calibrate
     // webgazer.removeMouseEventListeners();
-    // webgazer.applyKalmanFilter(true);
     webgazer.setGazeListener(getGaze).begin();
+    // do not use, custom filtering applied in worldView
+    // webgazer.applyKalmanFilter(true);
     webgazer.removeMouseEventListeners();
     // pausing right after begin, then resuming via state prop seems to fix
     // hangup issue on loading
@@ -67,16 +68,7 @@ const WebGazerData = (props) => {
   }
 
   return (
-    <div id="webGazeResults">
-      {/* <div id="buttonContainer">
-        <button onClick={webGazeStatus}>{props.gazeTracking ? `Pause webgaze` : `Resume webgaze`}</button>
-      </div> */}
-      {/* <div id="featureTracker">
-        {xyCoord ? <p> Gaze Position: X = {xyCoord[0]} Y = {xyCoord[1]}</p> : <p>no XYCoord</p>}
-        {localEyeFeatures ? <p>Eye Features: Left Width = {localEyeFeatures.left.width}</p> : <p>no Eye Features </p>}
-        {localEyeFeatures ? <p>Eye Features: Left Height = {localEyeFeatures.left.height}</p> : null}
-      </div> */}
-    </div>
+    <div id="webGazeResults"></div>
   )
 
 }

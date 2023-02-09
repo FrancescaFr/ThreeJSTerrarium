@@ -16,7 +16,7 @@ import Snail from './objects/gardensnail';
 import { degToRad } from 'three/src/math/MathUtils';
 
 
-const World = ({ userPositionData, playerState, handlePlayerState }) => {
+const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking }) => {
   const floorColorMap = useTexture({ map: 'textures/wood-texture-wild-hardwood-e68adc3402684d76a8f36b4238aaeda4.jpg' })
 
 
@@ -36,9 +36,12 @@ const World = ({ userPositionData, playerState, handlePlayerState }) => {
     // const angle = state.clock.elapsedTime
 
     //camera controls for webgaze perspective
+
     if (!playerState) {
+      // if (gazeTracking) {
       state.camera.fov = (75 - (userPositionData.head.dist)); // decrease field of view (narrows like window)
       state.camera.zoom = 1 - (userPositionData.head.dist / 25) //to compensate for fov (/75 obj. stay the same size) - (/25) to have actual zoom effect
+      // }
       // state.camera.position.z = 2 + (userPositionData.head.dist / 50)
       state.camera.position.x = 1 - (userPositionData.head.x * 20); // shift side to side with head
       state.camera.position.y = 0 - (userPositionData.head.y * 20);  // shift up and down with head
@@ -80,7 +83,7 @@ const World = ({ userPositionData, playerState, handlePlayerState }) => {
       encoding={undefined} // adds the ability to pass a custom THREE.TextureEncoding (default: THREE.sRGBEncoding for an array of files and THREE.LinearEncoding for a single texture)
     />
     {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
-    {/* <Sky distance={450000} sunPosition={[0, .5, 1]} inclination={0} azimuth={0.25} />
+    <Sky distance={450000} sunPosition={[0, .5, 1]} inclination={0} azimuth={0.25} />
     <Cloud
       opacity={0.5}
       speed={0.3} // Rotation speed
@@ -96,7 +99,7 @@ const World = ({ userPositionData, playerState, handlePlayerState }) => {
       depth={10} // Z-dir depth
       segments={5} // Number of particles
       position={[-10, 10, -15]}
-    /> */}
+    />
     {/* <directionalLight position={[1, 2, 3]} intensity={.5} />
     <pointLight position={[10, 10, 10]} intensity={1} />
     <ambientLight intensity={0.2} color="lightblue" /> */}
@@ -114,7 +117,7 @@ const World = ({ userPositionData, playerState, handlePlayerState }) => {
     <Table scale={2} position={[0, -2.2, 0]} />
     <Seat scale={2} position={[1.75, -2.2, 0]} rotation-y={-Math.PI * .75} />
     {/* <Crustaceo scale={.05} position={[.5, -0.5, .5]} /> */}
-    <Snail ref={snailRef} position={[0, -.4, 0]} playerState={playerState} handlePlayerState={handlePlayerState} />
+    <Snail ref={snailRef} position={[0, -.4, .9]} playerState={playerState} handlePlayerState={handlePlayerState} />
 
 
     <mesh position-y={-2.2} scale={20} rotation-x={- Math.PI * 0.5}>

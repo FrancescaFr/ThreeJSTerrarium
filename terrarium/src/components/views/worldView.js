@@ -167,7 +167,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
             { name: "jump", keys: ["Space"] },
           ]}> */}
         <Canvas>
-          <World userPositionData={userPositionData} xyCoord={xyCoord} defaultEyeFeatures={defaultEyeFeatures} eyeFeatures={eyeFeatures} playerState={playerState} handlePlayerState={handlePlayerState} />
+          <World userPositionData={userPositionData} gazeTracking={gazeTracking} playerState={playerState} handlePlayerState={handlePlayerState} />
           {/* <PointerLockControls /> */}
         </Canvas>
         {/* </KeyboardControls> */}
