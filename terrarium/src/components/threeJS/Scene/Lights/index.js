@@ -10,7 +10,7 @@ const Lights = () => {
 
   return (
     <group>
-      <FakeSphere />
+      {/* <FakeSphere /> */}
       <ambientLight position={[0, 4, 0]} intensity={0.3} />
       <directionalLight intensity={0.5} position={[0, 0, 0]} color={0xffffff} />
       <pointLight
