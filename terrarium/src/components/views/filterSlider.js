@@ -32,7 +32,7 @@ export default function FilterSlider({ q, setQ, a, setA }) {
   const marksA = [
     {
       value: 0.80,
-      label: 'sluggish',
+      label: 'low',
     },
     {
       value: 1,
@@ -40,7 +40,7 @@ export default function FilterSlider({ q, setQ, a, setA }) {
     },
     {
       value: 1.2,
-      label: 'fast',
+      label: 'high',
     }
   ]
 

@@ -1,15 +1,16 @@
 import './App.css';
-import { React } from 'react'
+import { React, useEffect } from 'react'
 import { useState } from 'react';
 import CalibrationView from './components/views/calibrationView';
 import WorldView from './components/views/worldView';
+
+const webgazer = window.webgazer
 
 function App() {
 
   const [calibrate, setCalibrate] = useState(false)
   const [userState, setUserState] = useState(true)
   const [defaultEyeFeatures, setDefaultEyeFeatures] = useState()
-  const webgazer = window.webgazer
 
   const handleCalibrate = () => {
     webgazer.end();
@@ -29,12 +30,15 @@ function App() {
     <div className="App">
       {calibrate ?
         <WorldView
+          webgazer={webgazer}
           calibrate={calibrate}
           handleCalibrate={handleCalibrate}
           defaultEyeFeatures={defaultEyeFeatures}
+          handleDefaultEyeFeatures={handleDefaultEyeFeatures}
           userState={userState}
           handleUserState={handleUserState} /> :
         <CalibrationView
+          webgazer={webgazer}
           calibrate={calibrate}
           handleCalibrate={handleCalibrate}
           defaultEyeFeatures={defaultEyeFeatures}

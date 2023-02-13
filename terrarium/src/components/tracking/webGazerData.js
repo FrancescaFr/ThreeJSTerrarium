@@ -2,23 +2,28 @@
 import './webGazerData.css';
 import { useEffect } from 'react';
 
-
 const WebGazerData = (props) => {
 
   const webgazer = window.webgazer
 
-
-  useEffect(() => {
+  const configureWebgazer = () => {
     webgazer.showVideo(false);
-    // webgazer.showPredictionPoints(false)
+    webgazer.showPredictionPoints(false)
     // webgazer.setRegression("ridge"); // does not use mouse move to calibrate
     // webgazer.removeMouseEventListeners();
+    // webgazer.loadGlobalData();
     webgazer.setGazeListener(getGaze).begin();
-    // do not use, custom filtering applied in worldView
-    // webgazer.applyKalmanFilter(true);
-    webgazer.removeMouseEventListeners();
+    // do not use if, custom filtering applied in worldView
+    webgazer.applyKalmanFilter(true);
+
+    // webgazer.removeMouseEventListeners();
     // pausing right after begin, then resuming via state prop seems to fix
     // hangup issue on loading
+
+  }
+
+  useEffect(() => {
+    configureWebgazer();
     webgazer.pause();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -43,7 +48,7 @@ const WebGazerData = (props) => {
   useEffect(() => {
     if (props.gazeTracking) {
       webgazer.resume()
-      webgazer.removeMouseEventListeners();
+      // webgazer.removeMouseEventListeners();
     } else {
       webgazer.pause()
     }

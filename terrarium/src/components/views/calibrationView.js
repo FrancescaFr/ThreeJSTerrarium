@@ -14,22 +14,24 @@ import CalibrationButtons from './calibrationButtons';
 // 1. Eye dimensions (pupil x & y) at "average distance" - use for camera zoom/pan reference
 // 2. Fine-Tune Gaze Model - use for camera rotation / selection
 
-export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, handleDefaultEyeFeatures }) {
-  const webgazer = window.webgazer;
+const webgazer = window.webgazer
+
+export default function CalibrationView({ setWebcamDims, handleCalibrate, defaultEyeFeatures, handleDefaultEyeFeatures }) {
   const [clickCount, setClickCount] = useState(0); // just for testing
   const [faceCapture, setFaceCapture] = useState(0);
   const [webgazerState, setWebgazerState] = useState(false);
   const [buttonVisibility, setbuttonVisibility] = useState(true)
   const buttonCount = 9;
 
-  useEffect(() => {
+
+  const setupWebgazer = () => {
     //start webgazer
-    webgazer.showVideo(true);
     // webgazer.setCameraConstraints()
+    webgazer.showVideo(false);
+    webgazer.setGazeListener(getGaze).begin();
     webgazer.setVideoElementCanvas(getWebcam)
     webgazer.setRegression("ridge"); // does not use movements to calibrate
     webgazer.clearData();
-    webgazer.setGazeListener(getGaze).begin();
     //require calibration for each session
     webgazer.saveDataAcrossSessions(true);
     // pausing right after begin, then resuming via state prop seems to fix
@@ -37,7 +39,11 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
     webgazer.pause();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
+
+  useEffect(() => {
+    setupWebgazer();
+  }, [])
 
 
   const handleWebgazerState = (state) => {
@@ -63,11 +69,18 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
       facingMode: "user"
     };
     const capture = await navigator.mediaDevices.getUserMedia(constraints);
+
+    const webcamWidth = capture.getVideoTracks()[0].getSettings().width
+    const webcamHeight = capture.getVideoTracks()[0].getSettings().height
+    setWebcamDims([webcamWidth, webcamHeight])
+
     return capture;
   }
 
   const handleFaceCapture = () => {
-    handleDefaultEyeFeatures(faceCapture);
+    if (faceCapture) {
+      handleDefaultEyeFeatures(faceCapture);
+    }
     // webgazer.pause()
     // let data = webgazer.getCurrentPrediction();
     // handleDefaultEyeFeatures(data.eyeFeatures);
@@ -89,8 +102,10 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
 
   const completeCalibration = () => {
     // webgazer.setGlobalData()
+    webgazer.showVideo(false);
+    webgazer.clearGazeListener()
     webgazer.removeMouseEventListeners();
-    // webgazer.setGlobalData();
+
     handleCalibrate();
   }
   const handleButtonVisibility = (state) => {
@@ -117,11 +132,13 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
   const clickMessage = 'click me!'
 
   const startCalibration = () => {
+    // setupWebgazer();
     handleClickCount();
     handleWebgazerState(true);
   }
 
   const skipCalibration = () => {
+    // setupWebgazer()
     setClickCount(10);
     handleWebgazerState(true);
   }
@@ -153,8 +170,7 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
       </CardContent>
       <CardActions>
         <Button onClick={startCalibration} style={clickCount > 0 ? { visibility: 'hidden' } : { visibility: 'visible' }}> Continue</Button>
-        <Button onClick={skipCalibration} style={clickCount > 0 ? { visibility: 'hidden' } : { visibility: 'visible' }}> Skip Calibration</Button>
-
+        <Button onClick={skipCalibration} style={clickCount > 0 ? { visibility: 'hidden' } : { visibility: 'visible' }}> Skip Gaze Calibration</Button>
       </CardActions>
     </React.Fragment >
   )
@@ -162,7 +178,6 @@ export default function CalibrationView({ handleCalibrate, defaultEyeFeatures, h
   const instructions2 = (
     <React.Fragment>
       <CardContent>
-
         <Typography variant="h4" component="div">
           Final Steps
         </Typography>

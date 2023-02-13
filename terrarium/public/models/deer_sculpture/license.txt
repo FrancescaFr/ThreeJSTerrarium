@@ -1,0 +1,11 @@
+Model Information:
+* title:	Deer Sculpture
+* source:	https://sketchfab.com/3d-models/deer-sculpture-e97f99c0216a4cae9a8b11d044d2694a
+* author:	Miaolailai (https://sketchfab.com/Miaolailai)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Deer Sculpture" (https://sketchfab.com/3d-models/deer-sculpture-e97f99c0216a4cae9a8b11d044d2694a) by Miaolailai (https://sketchfab.com/Miaolailai) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

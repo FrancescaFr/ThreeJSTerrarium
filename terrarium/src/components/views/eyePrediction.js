@@ -20,6 +20,8 @@ final data object should look like:
     gaze: {
       x: Xposition,
       y: Yposition,
+      wp: Xpercent,
+      hp: Ypercent.
       region: eyeRegion
     },
   }
@@ -74,35 +76,39 @@ async function headCalculations(defaultEyeFeatures, eyeFeatures) {
 
 }
 
-
 async function gazeCalculations(XYCoord) {
-  //TODO numbers should be converted to ratio of screen
-  const Xposition = Math.floor(XYCoord[0]);
+  //these x coordinates are relative to the viewport (user area)
+  const Xposition = (Math.floor(XYCoord[0]));
   const Yposition = Math.floor(XYCoord[1]);
+
+  // represented as percentage (also might help with filtering results predicably)
+  const Xpercent = Xposition / window.innerWidth;
+  const Ypercent = Yposition / window.innerWidth;
+
   let top, bottom, left, right, localEyeRegion
 
   // top of page
-  if (Yposition < 100) {
+  if (Ypercent < .2) {
     top = (true);
   } else {
     top = (false)
   }
 
   //bottom of page
-  if (Yposition > 700) {
+  if (Ypercent > .8) {
     bottom = (true)
   } else {
     bottom = (false)
   }
 
   // left of page
-  if (Xposition < 150) {
+  if (Xpercent < .2) {
     left = (true);
   } else {
     left = (false)
   }
   // right of page //
-  if (Xposition > 950) {
+  if (Xpercent > .8) {
     right = (true)
   } else {
     right = (false)
@@ -137,6 +143,8 @@ async function gazeCalculations(XYCoord) {
     {
       x: Xposition,
       y: Yposition,
+      wp: Xpercent,
+      hp: Ypercent,
       region: localEyeRegion
     }
   )

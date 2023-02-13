@@ -145,8 +145,6 @@ const FaceLandmark = (props) => {
   }
 
   // // Helper Functions
-
-
   // get video from reference to JSX element
   async function getVideo() {
     // Grab elements, create settings, etc.
@@ -163,23 +161,6 @@ const FaceLandmark = (props) => {
     return videoElement.current;
   }
 
-  // Create DOM Element and then add 
-  // async function getVideo() {
-  //   // Grab elements, create settings, etc.
-  //   const videoElement = document.createElement("video");
-  //   videoElement.setAttribute("style", "display: none;");
-  //   videoElement.width = width;
-  //   videoElement.height = height;
-  //   document.body.appendChild(videoElement);
-
-  //   // Create a webcam capture
-  //   const capture = await navigator.mediaDevices.getUserMedia({ video: true });
-  //   videoElement.srcObject = capture;
-  //   videoElement.play();
-
-  //   return videoElement;
-  // }
-
   function createCanvas(w, h) {
     canvas.current.width = w;
     canvas.current.height = h;
@@ -195,6 +176,5 @@ const FaceLandmark = (props) => {
     </>
   )
 }
-
 
 export default FaceLandmark;
