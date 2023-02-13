@@ -25,17 +25,6 @@
   color: black;
 }
 
-.controls-container {
-  background-color: rgb(135, 235, 212);
-  position: relative;
-  display: flex;
-  margin-left: auto;
-  flex-direction: column;
-  max-width: 300px;
-  padding: .25em;
-  font-size: calc(5px + 2vmin);
-  color: black;
-}
 
 .App-link {
   color: #61dafb;
@@ -55,6 +44,7 @@
   position: absolute;
   width: 100vw;
   height: 100vh;
+  z-index: 0;
  /* match to scene background to prevent flashing on load */
   background-color: skyblue;
 }

@@ -7,27 +7,46 @@ h1 {
 
 #fullscreen-buttons {
     position: fixed;
-    background-color: rgba(140, 244, 230, 0.564);
+    background-color: rgba(135, 235, 212, 0.499);
+    top: 0%;
+    width: 10%;
+    left: 45%;
+    z-index: 1;
+    display: grid;
+    grid: 1fr 1fr; 
+    justify-content: center; }
+   
+
+
+
+.fs-button {
+    position: fixed;
+    background-color: rgba(74, 238, 216, 0.564);
     top: 0%;
     margin-top: -.25em;
-    width: 20%;
-    left: 40%;
+    width: 10%;
+    left: 45%;
     z-index: 1;
     display: grid;
     grid: 1fr 1fr;
-    /* justify-content: center; */
-
-
-}
-.fs-button {
     /* text-shadow: 1px 1px 1.5px rgb(0, 0, 0); */
 }
 
-.controls-container{
+.controls-container {
+    background-color: rgb(135, 235, 212);
+    /* position: relative; */
+    display: flex;
+    margin-left: auto;
+    flex-direction: column;
+    max-width: 250px;
+    padding: .5em;
+    font-size: calc(5px + 2vmin);
+    color: black;
     position: fixed;
     right: 0%;
     z-index: 1;
-}
+  }
+
 
 #filter-slider {
     position: relative;
