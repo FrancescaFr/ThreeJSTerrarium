@@ -31,7 +31,7 @@ import CustomObject from './customObject';
 import Lights from './Scene/Lights/index';
 
 
-const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking, handleCalibrate, setFullScreenState }) => {
+const World = ({ userPositionData, playerState, handlePlayerState, orbitState, handleOrbitState, gazeTracking, handleCalibrate, setFullScreenState, setPlayerState }) => {
 
   //For Debugging - leva controller
   // const { humanPosition, zoomFactor, } = useControls({
@@ -65,8 +65,10 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
 
   const [side, setSide] = useState(true)
   const [focusPoint, setFocusPoint] = useState();
+  const [xShift, setXshift] = useState(0);
+  const [zShift, setZshift] = useState(0);
   const [pivotView, setPivotView] = useState(false);
-  const [inspectorView, setInspectorView] = useState(true);
+  // const [inspectorView, setInspectorView] = useState(true);
 
   const floorColorMap = useTexture({ map: 'textures/wood-texture-wild-hardwood-e68adc3402684d76a8f36b4238aaeda4.jpg' })
 
@@ -102,13 +104,16 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
       }
     )
 
-    // check for inspector/observer view   
+    // check for orbit state 
     subscribeKeys(
       (state) => { return state.shift },
       (value) => {
         if (value) {
           console.log('shift key')
-          setInspectorView(!inspectorView);
+          if (!playerState) {
+            handleOrbitState();
+          }
+          // setInspectorView(!inspectorView);
         }
       }
     )
@@ -119,16 +124,15 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
       (value) => {
         if (value) {
           console.log('reset position')
-          if (!playerState) {
-            setFocusPoint(null)
-            state.camera.position.x = 0
-            state.camera.position.y = 2.2
-            state.camera.position.z = 2
-          } else {
-            handlePlayerState(!playerState);
-          }
+          setFocusPoint(null)
+          setPlayerState(false)
+          state.camera.position.x = 0
+          state.camera.position.y = 2.2
+          state.camera.position.z = 2
+          setXshift(0);
+          setZshift(0)
         }
-      },
+      }
     )
 
     // check for space press
@@ -138,9 +142,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
         if (value) {
           console.log('spacebar function')
           //Flip Navigation View 
-          if (!playerState) {
-            setSide(!side)
-          }
+          setSide(!side)
         }
       }
     )
@@ -165,11 +167,32 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
         }
       }
     )
-
     // CAMERA CONTROLS
     //camera controls for Inspect Mode
-    if (inspectorView) {
+    if (!orbitState) {
       if (!playerState) {
+
+        //keyboard controls
+        const { forward, backward, left, right } = getKeys()
+        const shiftSpeed = 3;
+
+        if (forward) {
+          setZshift(zShift - delta * shiftSpeed)
+          console.log(zShift)
+        }
+        if (backward) {
+          setZshift(zShift + delta * shiftSpeed)
+          console.log(zShift)
+        }
+        if (left) {
+          setXshift(xShift + delta * shiftSpeed)
+          console.log(xShift)
+        }
+        if (right) {
+          setXshift(xShift - delta * shiftSpeed)
+          console.log(xShift)
+        }
+
         let orient = 1
         if (!side) {
           orient = -1
@@ -189,8 +212,8 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
           focusX = focusPoint.x
           focusZ = focusPoint.z
         }
-        state.camera.position.z = focusZ + orient * (2 + (userPositionData.head.dist / 50))
-        state.camera.position.x = focusX - orient * ((userPositionData.head.x * 20));
+        state.camera.position.z = focusZ + orient * (2 + zShift + (userPositionData.head.dist / 50))
+        state.camera.position.x = focusX - orient * (xShift + (userPositionData.head.x * 20));
 
         if (!focusPoint) {
           state.camera.lookAt(0, 2.2, 0)
@@ -236,6 +259,8 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
 
   const clickHandler = (event) => {
     setFocusPoint(event.point);
+    setZshift(0);
+    setXshift(0);
     // console.log('assigned focus');
     // console.log(event);
 
@@ -260,7 +285,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
     {playerState ? <OrbitControls /> : null}
 
     {/* Full orbit controls in explorer mode */}
-    {inspectorView ? null : <OrbitControls />}
+    {orbitState ? <OrbitControls /> : null}
 
     {/* TODO  - Add custom high res skybox from generated images (Gan360) */}
     {/* <Environment
@@ -305,7 +330,8 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
           ref={snailRef}
           rotation-y={degToRad(-90)}
           userPositionData={userPositionData}
-          getKeys={getKeys} snailJump={snailJump}
+          getKeys={getKeys}
+          snailJump={snailJump}
           snailBodyRef={snailBodyRef}
           playerState={playerState}
           handlePlayerState={handlePlayerState}

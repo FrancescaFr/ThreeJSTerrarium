@@ -24,7 +24,6 @@ export default function Snail(props) {
   useFrame((state, delta) => {
     if (!snailRef.current) { return; }
     // if (active) {
-    const keys = getKeys()
     const { forward, backward, left, right } = getKeys()
     // console.log(keys)
     const impulseStrength = .04 * delta
@@ -32,37 +31,39 @@ export default function Snail(props) {
     const impulse = { x: 0, y: 0, z: 0 }
     const torque = { x: 0, y: 0, z: 0 }
 
-    if (forward) {
-      impulse.x += impulseStrength
-      // const forwardDir = new THREE.Vector3();
-      // props.snailBodyRef.current.getWorldDirection(forwardDir)
-      // props.snailBodyRef.current.position += forwardDir
-      // props.snailBodyRef.current.translateZ(1)
+    if (props.playerState) {
+      if (forward) {
+        impulse.x += impulseStrength
+        // const forwardDir = new THREE.Vector3();
+        // props.snailBodyRef.current.getWorldDirection(forwardDir)
+        // props.snailBodyRef.current.position += forwardDir
+        // props.snailBodyRef.current.translateZ(1)
+      }
+      if (backward) {
+        impulse.x -= impulseStrength
+      }
+
+      if (left) {
+        // torque.y += torqueStrength
+        // props.snailBodyRef.current.rotate.y += delta
+        impulse.z -= impulseStrength
+
+      }
+      if (right) {
+        // torque.y -= torqueStrength
+        // props.snailBodyRef.current.rotate.y -= delta
+        impulse.z += impulseStrength
+
+      }
+      props.snailBodyRef.current.applyImpulse(impulse)
+
+      props.snailBodyRef.current.applyTorqueImpulse(torque)
     }
-    if (backward) {
-      impulse.x -= impulseStrength
-    }
-
-    if (left) {
-      // torque.y += torqueStrength
-      // props.snailBodyRef.current.rotate.y += delta
-      impulse.z -= impulseStrength
-
-    }
-    if (right) {
-      // torque.y -= torqueStrength
-      // props.snailBodyRef.current.rotate.y -= delta
-      impulse.z += impulseStrength
-
-    }
-    props.snailBodyRef.current.applyImpulse(impulse)
-
-    props.snailBodyRef.current.applyTorqueImpulse(torque)
-
     //For Debugging - Camera parameters
     // const bodyPosition = props.snailBodyRef.current.translation()
     // console.log(bodyPosition)
   })
+
 
   return (
     <RigidBody

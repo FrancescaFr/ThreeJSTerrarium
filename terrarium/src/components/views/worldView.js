@@ -1,6 +1,6 @@
 import './worldView.css'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stats, KeyboardControls } from '@react-three/drei';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
@@ -9,15 +9,19 @@ import KalmanFilter from "kalmanjs";
 //MUI Imports
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { List, ListItem, ListItemText } from '@mui/material'; //Item, Drawer, Menu, MenuItem, MenuList,
+import { List, ListItem, ListItemText, Typography } from '@mui/material'; //Item, Drawer, Menu, MenuItem, MenuList,
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Popover from '@mui/material/Popover';
+
 
 // Components, custom function imports
 import World from '../threeJS/world';
 import WebGazerData from '../tracking/webGazerData';
 import EyePrediction from './eyePrediction';
 import FilterSlider from './filterSlider';
+import InfoPopup from './infoPopup';
 
 
 const webgazer = window.webgazer
@@ -26,6 +30,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const [gazeTracking, setGazeTracking] = useState(true);
   const [webgazeData, setWebgazeData] = useState()
   const [showControls, setShowControls] = useState(false)
+  const [showTips, setShowTips] = useState(false)
   const [showData, setShowData] = useState(false);
   const [showFaceCapture, setShowFaceCapture] = useState(false);
   const [showPrediction, setShowPrediction] = useState(false);
@@ -35,6 +40,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const [userPositionData, setUserPositionData] = useState();
   const [filtering, setFiltering] = useState(true);
   const [playerState, setPlayerState] = useState(false)
+  const [orbitState, setOrbitState] = useState(false)
   const [r, setR] = useState(0.0001); //might not update
   const [q, setQ] = useState(0.02);
   const [a, setA] = useState(0.95);
@@ -85,29 +91,19 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultEyeFeatures, eyeFeatures, xyCoord])
 
-
+  const handleOrbitState = () => { setOrbitState(!orbitState) };
   const coordHandler = (xycoord) => { setXYCoord(xycoord) };
-
   const handleWebgazeData = (data) => { setWebgazeData(data) };
-
   const handleEyeFeatures = (data) => { setEyeFeatures(data) };
-
   const recalibrateFace = () => { handleDefaultEyeFeatures(eyeFeatures) };
-
   const handleGazeTracking = () => { setGazeTracking(!gazeTracking) };
-
   const handleShowControls = () => { setShowControls(!showControls) };
-
+  const handleShowTips = () => { setShowTips(!showTips) };
   const handleTrackingData = () => { setShowData(!showData) };
-
   const handleFiltering = () => { setFiltering(!filtering) };
-
   const handleFaceCapture = () => { setShowFaceCapture(!showFaceCapture) };
-
   const handlePlayerState = () => { setPlayerState(!playerState) };
-
   const handlePrediction = () => { setShowPrediction(!showPrediction) };
-
   const handleEyePrediction = (currentData) => {
     if (filtering) {
       currentData.head.x = fX.filter(currentData.head.x).toFixed(4)
@@ -119,6 +115,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     setUserPositionData(currentData)
   };
 
+  const containerRef = useRef(null);
   const worldFullScreen = useFullScreenHandle();
 
   // TODO: still need to switch screen state button text when minimizing with escape key (not working)
@@ -144,6 +141,7 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     handleCalibrate();
   }
 
+
   return <div >
     <WebGazerData
       webgazeData={webgazeData}
@@ -163,13 +161,14 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
           <Button onClick={handleFullScreen}>{fullScreenState ? <FullscreenExitIcon /> : <FullscreenIcon />}</Button>
           {showControls ?
             <>
-              <Button onClick={handleGazeTracking}>{gazeTracking ? `Pause webgaze` : `Resume webgaze`}</Button>
+              <Button onClick={handleGazeTracking}>{gazeTracking ? `Pause Facetrack` : `Resume FaceTrack`}</Button>
+              <Button onClick={handleFaceCapture}> {showFaceCapture ? 'Hide Face Capture' : 'Show Face Capture'}</Button>
+              {showFaceCapture ? <Button sx={{ color: "blue" }} onClick={recalibrateFace}>Recalibrate Face Mesh</Button> : null}
+
               <Button onClick={handleFiltering}>{filtering ? `Disable Kalman Filter` : `Enable Kalman Filter`}</Button>
               <Box sx={{}} id="filter-slider">
                 {filtering ? <FilterSlider q={q} setQ={setQ} a={a} setA={setA} /> : null}
               </Box>
-              <Button onClick={handleFaceCapture}> {showFaceCapture ? 'Hide Face Capture' : 'Show Face Capture'}</Button>
-              {showFaceCapture ? <Button sx={{ color: "blue" }} onClick={recalibrateFace}>Recalibrate Face Mesh</Button> : null}
               <Button onClick={handlePrediction}> {showPrediction ? 'Hide Gaze Prediction' : 'Show Gaze Prediction'}</Button>
 
               <Button onClick={handleTrackingData}> {showData ? 'Hide Tracking Data' : 'Show Tracking Data'}</Button>
@@ -183,11 +182,22 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
         </Box>
       </div>
 
+      <div className="tips-container" ref={containerRef}>
+        <InfoPopup containerRef={containerRef} />
+      </div>
+
       <div id="scene-container">
-        {playerState ?
-          <Box id="fullscreen-buttons">
-            <Button onClick={handlePlayerState}> Escape Snail </Button>
-          </Box> : null}
+        {!orbitState &&
+          <Box className="fullscreen-buttons">
+            {playerState ?
+              <Button onClick={handlePlayerState}> Navigation Mode </Button> :
+              <Button onClick={handlePlayerState}> Inspect Mode </Button>}
+          </Box>}
+        {orbitState &&
+          <Box className="fullscreen-buttons">
+            <Button onClick={handleOrbitState}> Mouse Control Mode </Button>
+          </Box>}
+
         <KeyboardControls
           map={[
             { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -202,15 +212,18 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
             { name: "shift", keys: ["Shift"] }
           ]}>
           <Canvas>
-            {/* helper tools for development */}
-            <axesHelper args={[10]} />
-            <Stats />
+            {/* helper tools for Debugging */}
+            {/* <axesHelper args={[10]} />
+            <Stats /> */}
             <World
               userPositionData={userPositionData}
               gazeTracking={gazeTracking}
               playerState={playerState}
+              setPlayerState={setPlayerState}
               handlePlayerState={handlePlayerState}
               handleCalibrate={handleCalibrate}
+              orbitState={orbitState}
+              handleOrbitState={handleOrbitState}
               setFullScreenState={setFullScreenState} />
             {/* <PointerLockControls /> */}
           </Canvas>
