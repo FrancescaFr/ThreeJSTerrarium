@@ -39,8 +39,6 @@ const CustomObject = () => {
   }, [positions])
 
 
-
-
   const [active, setActive] = useState(false);
   const [hover, setHover] = useState(false);
 

@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# Three JS Terrarium 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Deployment: [three-js-terrarium.vercel.app](three-js-terrarium.vercel.app)
 
-## Available Scripts
+---
+## Project Proposal
 
-In the project directory, you can run:
+### Learning Goals
 
-### `npm start`
+- Learn to build 3D Scene with ThreeJS (Including Movement, Camera Control, & Lighting)
+- Learn how to integrate user interaction (browser events) into ThreeJS scene
+	- Learn to use Webcam Input and API to collect additional user data (eyetracking + pose estimation)
+- Learn to deploy FrontEnd JS site
+- (Probably not, but If Time - Build a Backend Component):
+	- Learn how to authenticate users, store userdata - possibly permit the upload of models (data heavy) or saving custom scenes (more lightweight - ex. store past user actions/events to restore camera location/threejs scene properties).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Project Description
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The goal of this project is to make a responsive web-based 3D scene on a single page site using threeJS. Assets for the page would be built or exported to GLTF using Blender, or whole scenes being built with PolygonJS.
+- At a minimum, the user should be able to look around and navigate the scene using keyboard or mouse input.
+-  Ideally, the user's view would be constrained like a window, with user's distance relative to the screen changing the camera perspective in the scene. Additionally, user gaze (where on the screen they are looking) may be used for navigation (moving camera within the scene).
+-  Reach goals likely to be completed outside the 3-week capstone window would include authentication and persistent data storage - allowing users login, save their position or even upload or manipulate models.
 
-### `npm test`
+### Technologies
+#### Main Technologies:
+- JS / React (Front End)
+- Vercel (Deployment)
+- ThreeJS library
+- React-Three-Fiber
+- WebGazer API
+- Facemesh API
+- (Optional) OpenCV for pose tracking 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### Additional Technologies:
+- Blender
+- Photoshop
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### MVP Feature Set
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1.  Deploy Front End Website that recognizes and reports movements/and or facial features of user
+	- WebGazer for Eye tracking
+    - (Optional) OpenCV for pose tracking 
+    - (Optional) dashboard of tracked values
+2. ThreeJS scene rendering 3D Objects, lighting
+	-  Interactive/responsive elements (keyboard input)
+	-  (Optional) Eye-responsive camera view
+  
+- Deployed Frontend ThreeJS Scene
+	- 3D Objects & lighting Rendering
+	- Camera position responsive to manual user input (keyboard)
+	- Camera view responsive to webcam input (via WebGazer Eye Position or OpenCV pose est.)

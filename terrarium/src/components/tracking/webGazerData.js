@@ -55,7 +55,6 @@ const WebGazerData = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.gazeTracking])
 
-
   let xyCoord = null;
 
   const getGaze = (data, clock) => {

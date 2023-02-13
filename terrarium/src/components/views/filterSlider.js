@@ -1,20 +1,13 @@
-import { useState } from 'react';
-import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import { Typography } from '@mui/material';
 
 export default function FilterSlider({ q, setQ, a, setA }) {
 
-  // const [valueQ, setValueQ] = useState(q);
-  // const [valueA, setValueA] = useState(a);
-
   const handleQ = (event, q) => {
-    // setValueQ(q)
     setQ(q);
   }
 
   const handleA = (event, a) => {
-    // setValueA(valueA)
     setA(a);
   }
 
@@ -43,7 +36,6 @@ export default function FilterSlider({ q, setQ, a, setA }) {
       label: 'high',
     }
   ]
-
 
   return (
     <>

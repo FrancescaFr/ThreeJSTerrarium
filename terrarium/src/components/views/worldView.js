@@ -2,20 +2,23 @@ import './worldView.css'
 
 import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Stats } from '@react-three/drei';
-import { KeyboardControls, PointerLockControls, useKeyboardControls } from '@react-three/drei';
+import { Stats, KeyboardControls } from '@react-three/drei';
+import { FullScreen, useFullScreenHandle } from 'react-full-screen';
+import KalmanFilter from "kalmanjs";
+
+//MUI Imports
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { List, ListItem, ListItemText } from '@mui/material'; //Item, Drawer, Menu, MenuItem, MenuList,
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import { FullScreen, useFullScreenHandle } from 'react-full-screen';
+
+// Components, custom function imports
 import World from '../threeJS/world';
 import WebGazerData from '../tracking/webGazerData';
 import EyePrediction from './eyePrediction';
-
-import KalmanFilter from "kalmanjs";
 import FilterSlider from './filterSlider';
+
 
 const webgazer = window.webgazer
 
@@ -53,7 +56,6 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   // <1 applies dampening effect (less jittery/less responsive to movement)
   // filter can also accommodate a control function matrix (could be customized for particular applications)
 
-
   const updateGazeFilters = () => {
     // setFg(new KalmanFilter({ R: r, Q: q, A: a }));
     setFgx(new KalmanFilter({ R: r, Q: q, A: a }));
@@ -71,17 +73,17 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
 
   useEffect(() => { updateGazeFilters() }, [gazeA, gazeQ, gazeR]);
 
+  useEffect(() => {
 
-  const worldFullScreen = useFullScreenHandle();
+    const getCurrentData = async () => {
+      const currentData = await EyePrediction(defaultEyeFeatures, eyeFeatures, xyCoord);
+      handleEyePrediction(currentData)
+    }
+    getCurrentData().catch(console.error);
 
-  // still need to switch screen state button text when minimizing with escape key
-  // const handleKeyDown = event => {
-  //   console.log(event.key);
-  //   if (event.key === "Escape") {
-  //     setFullScreenState(false);
-  //   }
-  // };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultEyeFeatures, eyeFeatures, xyCoord])
 
 
   const coordHandler = (xycoord) => { setXYCoord(xycoord) };
@@ -89,6 +91,8 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const handleWebgazeData = (data) => { setWebgazeData(data) };
 
   const handleEyeFeatures = (data) => { setEyeFeatures(data) };
+
+  const recalibrateFace = () => { handleDefaultEyeFeatures(eyeFeatures) };
 
   const handleGazeTracking = () => { setGazeTracking(!gazeTracking) };
 
@@ -99,6 +103,8 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
   const handleFiltering = () => { setFiltering(!filtering) };
 
   const handleFaceCapture = () => { setShowFaceCapture(!showFaceCapture) };
+
+  const handlePlayerState = () => { setPlayerState(!playerState) };
 
   const handlePrediction = () => { setShowPrediction(!showPrediction) };
 
@@ -113,19 +119,18 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     setUserPositionData(currentData)
   };
 
-  const recalibrate = () => {
-    webgazer.clearData();
-    webgazer.end();
-    handleCalibrate();
-  }
+  const worldFullScreen = useFullScreenHandle();
 
-  const recalibrateFace = () => {
-    handleDefaultEyeFeatures(eyeFeatures);
-  }
+  // TODO: still need to switch screen state button text when minimizing with escape key (not working)
+  // const handleKeyDown = event => {
+  //   console.log(event.key);
+  //   if (event.key === "Escape") {
+  //     setFullScreenState(false);
+  //   }
+  // };
 
   const handleFullScreen = () => {
     setFullScreenState(!fullScreenState);
-
     if (fullScreenState) {
       worldFullScreen.exit();
     } else {
@@ -133,22 +138,11 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     }
   }
 
-
-  const handlePlayerState = () => {
-    setPlayerState(!playerState)
+  const recalibrate = () => {
+    webgazer.clearData();
+    webgazer.end();
+    handleCalibrate();
   }
-
-  useEffect(() => {
-
-    const getCurrentData = async () => {
-      const currentData = await EyePrediction(defaultEyeFeatures, eyeFeatures, xyCoord);
-      handleEyePrediction(currentData)
-    }
-    getCurrentData().catch(console.error);
-
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultEyeFeatures, eyeFeatures, xyCoord])
 
   return <div >
     <WebGazerData
@@ -187,7 +181,6 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
               </List> : null}
             </> : null}
         </Box>
-
       </div>
 
       <div id="scene-container">
@@ -212,7 +205,13 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
             {/* helper tools for development */}
             <axesHelper args={[10]} />
             <Stats />
-            <World userPositionData={userPositionData} gazeTracking={gazeTracking} playerState={playerState} handlePlayerState={handlePlayerState} handleCalibrate={handleCalibrate} />
+            <World
+              userPositionData={userPositionData}
+              gazeTracking={gazeTracking}
+              playerState={playerState}
+              handlePlayerState={handlePlayerState}
+              handleCalibrate={handleCalibrate}
+              setFullScreenState={setFullScreenState} />
             {/* <PointerLockControls /> */}
           </Canvas>
         </KeyboardControls>

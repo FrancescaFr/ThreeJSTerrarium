@@ -17,7 +17,7 @@ import CalibrationButtons from './calibrationButtons';
 const webgazer = window.webgazer
 
 export default function CalibrationView({ setWebcamDims, handleCalibrate, defaultEyeFeatures, handleDefaultEyeFeatures }) {
-  const [clickCount, setClickCount] = useState(0); // just for testing
+  const [clickCount, setClickCount] = useState(10); // skipping eye calibration for now
   const [faceCapture, setFaceCapture] = useState(0);
   const [webgazerState, setWebgazerState] = useState(false);
   const [buttonVisibility, setbuttonVisibility] = useState(true)
@@ -201,9 +201,48 @@ export default function CalibrationView({ setWebcamDims, handleCalibrate, defaul
     </React.Fragment >
   )
 
+  const abbrInstructions = (
+    <React.Fragment>
+      <CardContent>
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          welcome to
+        </Typography>
+        <Typography variant="h2" component="div">
+          ThreeJS Terrarium
+        </Typography>
+        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+          To get started:
+        </Typography>
+        <Typography variant="body1">
+          1. Allow site to use Webcam (<b>no video will be recorded</b>)
+        </Typography>
+        <Typography variant="body1">
+          2. Wait for video preview and green tracking data to appear.
+        </Typography>
+        <Typography variant="body1">
+          3. Doubleclick 'capture face dimensions'
+        </Typography>
+      </CardContent>
+      <CardActions >
+        {defaultEyeFeatures ? <Button onClick={completeCalibration}><b>Start Terrarium</b></Button> :
+          <Button onClick={handleFaceCapture}>Capture Face Dims</Button>}
+      </CardActions>
+    </React.Fragment >
+  )
+
   return (
+
     <div >
+      {/* {handleFaceCapture()} */}
+
       {clickCount > buttonCount &&
+        <div className="main-calibration-view" >
+          <Box sx={{ minWidth: 275, boxShadow: 3, maxWidth: 600, margin: 3 }}>
+            <Card variant="outlined">{abbrInstructions}</Card>
+          </Box>
+        </div>
+      }
+      {/* }      {clickCount > buttonCount &&
         <div className="main-calibration-view" >
           <Box sx={{ minWidth: 275, boxShadow: 3, maxWidth: 600, margin: 3 }}>
             <Card variant="outlined">{instructions2}</Card>
@@ -217,7 +256,7 @@ export default function CalibrationView({ setWebcamDims, handleCalibrate, defaul
             <Card variant="outlined">{instructions1}</Card>
           </Box>
         </div>
-      }
+      } */}
       {
         clickCount > 0 && <CalibrationButtons
           clickCount={clickCount}

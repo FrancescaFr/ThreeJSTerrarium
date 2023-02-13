@@ -27,11 +27,18 @@
 }
 
 .main-calibration-view {
+    z-index: 3;
     position: absolute;
     display: flex;
     width: 100vw;
     height: 100vh;
     justify-content: center;
     align-items: center;
-    background-color: skyblue;
+    /* background-color: skyblue; */
+}
+
+#selection-button {
+    display: flex;
+    text-align: center;
+    justify-content: center;
 }

@@ -1,5 +1,5 @@
 import './App.css';
-import { React, useEffect } from 'react'
+import { React } from 'react'
 import { useState } from 'react';
 import CalibrationView from './components/views/calibrationView';
 import WorldView from './components/views/worldView';

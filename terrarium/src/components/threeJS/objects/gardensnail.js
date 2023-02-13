@@ -1,6 +1,6 @@
 
 import React, { useRef, useState } from "react";
-import * as THREE from 'three';
+// import * as THREE from 'three';
 import { useGLTF, useTexture } from "@react-three/drei";
 import { useFrame } from '@react-three/fiber';
 import { RigidBody } from "@react-three/rapier";
@@ -45,11 +45,13 @@ export default function Snail(props) {
 
     if (left) {
       // torque.y += torqueStrength
+      // props.snailBodyRef.current.rotate.y += delta
       impulse.z -= impulseStrength
 
     }
     if (right) {
       // torque.y -= torqueStrength
+      // props.snailBodyRef.current.rotate.y -= delta
       impulse.z += impulseStrength
 
     }
@@ -57,11 +59,9 @@ export default function Snail(props) {
 
     props.snailBodyRef.current.applyTorqueImpulse(torque)
 
-    //Camera parameters
-    const bodyPosition = props.snailBodyRef.current.translation()
+    //For Debugging - Camera parameters
+    // const bodyPosition = props.snailBodyRef.current.translation()
     // console.log(bodyPosition)
-
-    // }
   })
 
   return (

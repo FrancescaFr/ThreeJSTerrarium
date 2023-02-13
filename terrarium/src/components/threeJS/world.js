@@ -1,83 +1,37 @@
-import { React, useRef, useState, useEffect } from 'react'
-import { Suspense } from 'react'
-import { useControls } from 'leva';
-import { TransformControls, PointerLock, PivotControls, useKeyboardControls } from '@react-three/drei';
+import { React, useRef, useState, useEffect, Suspense } from 'react'
 import * as THREE from 'three';
-import { useFrame, useThree } from "@react-three/fiber"; //useThree, 
-import { FirstPersonControls, FirstPersonControlsProps } from '@react-three/drei';
+import { degToRad } from 'three/src/math/MathUtils';
+import { useControls } from 'leva';
 import { Physics, RigidBody, Debug } from '@react-three/rapier'
-// import { WebGLRenderer } from "@react-three/fiber"
+
+import { useFrame, useThree } from "@react-three/fiber"; //useThree, 
 import {
-  OrbitControls, PerspectiveCamera,
+  OrbitControls, PivotControls, useKeyboardControls,
+  PerspectiveCamera, useProgress,
   Stars, Sky, Cloud, Environment, useTexture,
   Text, Float,
   MeshReflectorMaterial,
   useGLTF, Clone, useAnimations,
   meshBounds
 } from "@react-three/drei";
-// import { KeyboardControls, PointerLockControls } from '@react-three/drei';
-import CustomObject from './customObject';
-import Lights from './Scene/Lights/index';
+
+//--- Imports for incomplete or commented-out features
+// import { FirstPersonControls, FirstPersonControlsProps } from '@react-three/drei';
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 // import {useLoader} from "@react-three/fiber"
 
-// ------------- Object model imports ------------
+// ------------- model / scene asset imports ------------
 import Table from './objects/table'
 import Seat from './objects/seat'
 import Snail from './objects/gardensnail';
 import Fox from './objects/fox';
 import Deer from './objects/deer';
 import Plane from './objects/plane';
-import { degToRad } from 'three/src/math/MathUtils';
-import { CatmullRomCurve3, Group, MeshStandardMaterial, ZeroFactor } from 'three';
+import CustomObject from './customObject';
+import Lights from './Scene/Lights/index';
 
 
-
-const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking, handleCalibrate }) => {
-
-
-
-  //keyboard Controls
-  const [subscribeKeys, getKeys] = useKeyboardControls()
-
-  // const delay = ms => new Promise(
-  //   resolve => setTimeout(resolve, ms)
-  // );
-
-  // async function buttonDelay() {
-  //   await delay(1000);
-  // }
-
-
-  // // useEffect(() => {
-  // //   flipSide();
-  // // , [space]})
-
-  // //TODO subscribe mode for ongoing actions
-  // useEffect(() => {
-  //   subscribeKeys(
-  //     (state) => {
-  //       return state.space
-  //     },
-  //     (value) => {
-  //       if (value) {
-  //         console.log('spacebar function')
-  //         //Flip Navigation View 
-  //         setSide(!side)
-  //         if (playerState) {
-  //           //do something in navigation mode
-  //         }
-  //       }
-
-  //     }
-  //   )
-  // }, [getKeys])
-
-  // TODO: First person player controls (Relative Movement)
-  // const playerControls = new FirstPersonControls()
-
-
-  const floorColorMap = useTexture({ map: 'textures/wood-texture-wild-hardwood-e68adc3402684d76a8f36b4238aaeda4.jpg' })
+const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking, handleCalibrate, setFullScreenState }) => {
 
   //For Debugging - leva controller
   // const { humanPosition, zoomFactor, } = useControls({
@@ -102,8 +56,6 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
   // }
   // )
 
-  const cubeRef = useRef()
-  const groupRef = useRef()
   const snailRef = useRef()
   const snailBodyRef = useRef()
   const customRef = useRef()
@@ -116,8 +68,17 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
   const [pivotView, setPivotView] = useState(false);
   const [inspectorView, setInspectorView] = useState(true);
 
-  //runs on each frame run (based on framerate -need to account for variable FPS)
+  const floorColorMap = useTexture({ map: 'textures/wood-texture-wild-hardwood-e68adc3402684d76a8f36b4238aaeda4.jpg' })
+
+  //keyboard Controls
+  const [subscribeKeys, getKeys] = useKeyboardControls()
+
+  // TODO: First person player controls (Relative Movement)
+  // const playerControls = new FirstPersonControls()
+
+  //Runs on each frame run (based on framerate -need to account for variable FPS)
   useFrame((state, delta) => {
+
     // Flight ANIMATION CONTROLS
     const time = state.clock.getElapsedTime()
     const angle = time / 3
@@ -129,14 +90,10 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
     const z = -Math.sin(angle) * 10
     flightRef.current.setNextKinematicTranslation({ x: x, y: 8, z: z })
 
-
     // BUTTON PRESSES 
-
     // check for scene reset   
     subscribeKeys(
-      (state) => {
-        return state.reset
-      },
+      (state) => { return state.reset },
       (value) => {
         if (value) {
           console.log('reset scene')
@@ -147,9 +104,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
 
     // check for inspector/observer view   
     subscribeKeys(
-      (state) => {
-        return state.shift
-      },
+      (state) => { return state.shift },
       (value) => {
         if (value) {
           console.log('shift key')
@@ -160,9 +115,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
 
     // check for X press    
     subscribeKeys(
-      (state) => {
-        return state.x
-      },
+      (state) => { return state.x },
       (value) => {
         if (value) {
           console.log('reset position')
@@ -180,9 +133,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
 
     // check for space press
     subscribeKeys(
-      (state) => {
-        return state.space
-      },
+      (state) => { return state.space },
       (value) => {
         if (value) {
           console.log('spacebar function')
@@ -195,14 +146,22 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
     )
     // check for control (c) press
     subscribeKeys(
-      (state) => {
-        return state.control
-      },
+      (state) => { return state.control },
       (value) => {
         if (value) {
           if (!playerState) {
             setPivotView(!pivotView)
           }
+        }
+      }
+    )
+    // check for escape (from fullscreen)
+    subscribeKeys(
+      (state) => { return state.escape },
+      (value) => {
+        if (value) {
+          console.log("escape") // TODO - still not logging in full screen
+          setFullScreenState(false)
         }
       }
     )
@@ -217,8 +176,6 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
         }
         state.camera.fov = 75 - ((userPositionData.head.dist)); // decrease field of view (narrows like window)
         state.camera.zoom = 1 - (userPositionData.head.dist / (25)) //to compensate for fov (/75 obj. stay the same size) - (/25) to have actual zoom effect
-
-        // fixed camera height    
         state.camera.position.y = 2.2 - (userPositionData.head.y * 20);  // shift up and down with head
 
         // default camera positions
@@ -233,17 +190,13 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
           focusZ = focusPoint.z
         }
         state.camera.position.z = focusZ + orient * (2 + (userPositionData.head.dist / 50))
-        state.camera.position.x = focusX - orient * ((userPositionData.head.x * 20)); // shift side to side with head
+        state.camera.position.x = focusX - orient * ((userPositionData.head.x * 20));
 
         if (!focusPoint) {
           state.camera.lookAt(0, 2.2, 0)
         } else {
           state.camera.lookAt(focusPoint) // must be Vector3
         }
-        // state.camera.rotateX(0)
-        // state.camera.rotateY(0)
-        // set z position by keyboard
-        // state.camera.position.z = 
       }
 
       // Navigate View Camera Controls (Snail View)
@@ -283,14 +236,12 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
 
   const clickHandler = (event) => {
     setFocusPoint(event.point);
-    //should just be 2.2m away from focus Point
-    // setCameraPosition() TODO
-    // THREE.state.camera.lookAt(event.point);
-    console.log('clicked something');
-    console.log(event);
+    // console.log('assigned focus');
+    // console.log(event);
 
   }
 
+  // object-specific functions
   const snailJump = () => {
     const mass = snailBodyRef.current.mass()
     snailBodyRef.current.applyImpulse({ x: 0, y: 0.5 * mass, z: 0 })
@@ -307,9 +258,9 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
 
     {/* leveraging orbitcontrols for camera orientation preservation in player mode, movement options overridden - TODO: extract relevant functionality and remove*/}
     {playerState ? <OrbitControls /> : null}
+
     {/* Full orbit controls in explorer mode */}
     {inspectorView ? null : <OrbitControls />}
-
 
     {/* TODO  - Add custom high res skybox from generated images (Gan360) */}
     {/* <Environment
@@ -350,7 +301,15 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
 
         <Table scale={2} position={[0, 0, 0]} />
         <Seat scale={2} />
-        <Snail ref={snailRef} rotation-y={degToRad(-90)} userPositionData={userPositionData} getKeys={getKeys} snailJump={snailJump} snailBodyRef={snailBodyRef} playerState={playerState} handlePlayerState={handlePlayerState} clickHandler={clickHandler} />
+        <Snail
+          ref={snailRef}
+          rotation-y={degToRad(-90)}
+          userPositionData={userPositionData}
+          getKeys={getKeys} snailJump={snailJump}
+          snailBodyRef={snailBodyRef}
+          playerState={playerState}
+          handlePlayerState={handlePlayerState}
+          clickHandler={clickHandler} />
 
         <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
           <Fox handleClick={clickHandler} actions='walk' />
@@ -367,9 +326,6 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
           type="kinematicPosition">
           <group >
             <Plane clickHandler={clickHandler} />
-            {/* <mesh position={[0, 10, 8]}>
-              <sphereGeometry />
-            </mesh> */}
           </group>
         </RigidBody>
       </Suspense>
@@ -377,6 +333,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking,
       <RigidBody type='fixed'>
         <mesh position-y={0} scale={1} >
           <boxGeometry args={[100, .2, 100]} />
+          {/* for debugging */}
           {/* <meshStandardMaterial color="black" /> */}
           <MeshReflectorMaterial
             resolution={512}
