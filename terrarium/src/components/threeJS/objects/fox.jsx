@@ -33,3 +33,4 @@ export default function Fox({actions, handleClick}){
         raycast={meshBounds}
         onClick={handleClick}
         />}
+        

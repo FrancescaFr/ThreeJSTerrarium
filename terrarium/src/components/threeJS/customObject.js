@@ -56,7 +56,7 @@ const CustomObject = () => {
   return (
     <>
       <PivotControls anchor={[0, 0, 0]} depthTest={false}>
-        <mesh ref={customRef} onClick={() => {
+        <mesh ref={customRef} position={[0, 2.2, 0]} onClick={() => {
           setActive(!active);
         }}
           onPointerOver={() => {

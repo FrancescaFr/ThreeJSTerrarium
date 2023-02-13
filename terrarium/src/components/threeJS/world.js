@@ -29,39 +29,57 @@ import Fox from './objects/fox';
 import Deer from './objects/deer';
 import Plane from './objects/plane';
 import { degToRad } from 'three/src/math/MathUtils';
-import { CatmullRomCurve3, Group, MeshStandardMaterial } from 'three';
+import { CatmullRomCurve3, Group, MeshStandardMaterial, ZeroFactor } from 'three';
 
 
 
-const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gazeTracking }) => {
+const World = ({ userPositionData, playerState, handlePlayerState, gazeTracking, handleCalibrate }) => {
 
-  const [focusPoint, setFocusPoint] = useState();
+
 
   //keyboard Controls
-  const [subscribeKeys] = useKeyboardControls()
+  const [subscribeKeys, getKeys] = useKeyboardControls()
 
-  useEffect(() => {
-    subscribeKeys(
-      (state) => {
-        return state.space
-      },
-      (value) => {
-        if (value)
-          console.log('spacebar function')
+  // const delay = ms => new Promise(
+  //   resolve => setTimeout(resolve, ms)
+  // );
 
-      }
-    )
-  }, [])
+  // async function buttonDelay() {
+  //   await delay(1000);
+  // }
 
-  // First person player controls
+
+  // // useEffect(() => {
+  // //   flipSide();
+  // // , [space]})
+
+  // //TODO subscribe mode for ongoing actions
+  // useEffect(() => {
+  //   subscribeKeys(
+  //     (state) => {
+  //       return state.space
+  //     },
+  //     (value) => {
+  //       if (value) {
+  //         console.log('spacebar function')
+  //         //Flip Navigation View 
+  //         setSide(!side)
+  //         if (playerState) {
+  //           //do something in navigation mode
+  //         }
+  //       }
+
+  //     }
+  //   )
+  // }, [getKeys])
+
+  // TODO: First person player controls (Relative Movement)
   // const playerControls = new FirstPersonControls()
-  // playerControls.movementSpeed = 1
-
 
 
   const floorColorMap = useTexture({ map: 'textures/wood-texture-wild-hardwood-e68adc3402684d76a8f36b4238aaeda4.jpg' })
 
-  //leva controller
+  //For Debugging - leva controller
   // const { humanPosition, zoomFactor, } = useControls({
   //   humanPosition: {
   //     value: 3,
@@ -81,11 +99,8 @@ const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gaze
   //   //   max: 5,
   //   //   step: 0.01
   //   // }
-
   // }
   // )
-
-  //use to access state values (clock, camera, etc)
 
   const cubeRef = useRef()
   const groupRef = useRef()
@@ -96,24 +111,10 @@ const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gaze
   const flightRef = useRef()
   const planeRef = useRef()
 
-
-
-
-  //   const points = curve.getPoints( 16 );
-
-  // for (let i = 0; i < points.length; i++) {
-  //     const point = points[i];
-  //     const norm = i / points.length;
-  //     const tan = curve.getTangent(norm);
-  //     console.log(tan);
-
-  //     const geometry = new BoxGeometry();
-  //     this.cube = new Mesh(geometry, material);
-  //     this.cube.position.set(point.x, point.y, point.z);
-  //     this.cube.lookAt(tan);
-  //     this.canvas.scene.add(this.cube);
-  // }
-
+  const [side, setSide] = useState(true)
+  const [focusPoint, setFocusPoint] = useState();
+  const [pivotView, setPivotView] = useState(false);
+  const [inspectorView, setInspectorView] = useState(true);
 
   //runs on each frame run (based on framerate -need to account for variable FPS)
   useFrame((state, delta) => {
@@ -129,65 +130,161 @@ const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gaze
     flightRef.current.setNextKinematicTranslation({ x: x, y: 8, z: z })
 
 
+    // BUTTON PRESSES 
+
+    // check for scene reset   
+    subscribeKeys(
+      (state) => {
+        return state.reset
+      },
+      (value) => {
+        if (value) {
+          console.log('reset scene')
+          handleCalibrate();
+        }
+      }
+    )
+
+    // check for inspector/observer view   
+    subscribeKeys(
+      (state) => {
+        return state.shift
+      },
+      (value) => {
+        if (value) {
+          console.log('shift key')
+          setInspectorView(!inspectorView);
+        }
+      }
+    )
+
+    // check for X press    
+    subscribeKeys(
+      (state) => {
+        return state.x
+      },
+      (value) => {
+        if (value) {
+          console.log('reset position')
+          if (!playerState) {
+            setFocusPoint(null)
+            state.camera.position.x = 0
+            state.camera.position.y = 2.2
+            state.camera.position.z = 2
+          } else {
+            handlePlayerState(!playerState);
+          }
+        }
+      },
+    )
+
+    // check for space press
+    subscribeKeys(
+      (state) => {
+        return state.space
+      },
+      (value) => {
+        if (value) {
+          console.log('spacebar function')
+          //Flip Navigation View 
+          if (!playerState) {
+            setSide(!side)
+          }
+        }
+      }
+    )
+    // check for control (c) press
+    subscribeKeys(
+      (state) => {
+        return state.control
+      },
+      (value) => {
+        if (value) {
+          if (!playerState) {
+            setPivotView(!pivotView)
+          }
+        }
+      }
+    )
+
     // CAMERA CONTROLS
-    //camera controls for webgaze perspective
-    if (!playerState) {
-      // if (gazeTracking) {
-      const fovFactor = 5
-      state.camera.fov = 75 - ((userPositionData.head.dist)); // decrease field of view (narrows like window)
-      state.camera.zoom = 1 - (userPositionData.head.dist / (25)) //to compensate for fov (/75 obj. stay the same size) - (/25) to have actual zoom effect
-      // }
-      state.camera.position.z = 2 + (userPositionData.head.dist / 50)
-      state.camera.position.x = 1 - (userPositionData.head.x * 20); // shift side to side with head
-      state.camera.position.y = 2.2 - (userPositionData.head.y * 20);  // shift up and down with head
-      state.camera.position.z = 2.5;
-      // state.camera.lookAt(focusPoint);
-      //TODO: update to mouse pointer or gaze prediction (raycaster)
-      state.camera.lookAt(0, 2.2, 0)
-      // state.camera.rotateX(0)
-      // state.camera.rotateY(0)
-      // set z position by keyboard
-      // state.camera.position.z = 
+    //camera controls for Inspect Mode
+    if (inspectorView) {
+      if (!playerState) {
+        let orient = 1
+        if (!side) {
+          orient = -1
+        }
+        state.camera.fov = 75 - ((userPositionData.head.dist)); // decrease field of view (narrows like window)
+        state.camera.zoom = 1 - (userPositionData.head.dist / (25)) //to compensate for fov (/75 obj. stay the same size) - (/25) to have actual zoom effect
+
+        // fixed camera height    
+        state.camera.position.y = 2.2 - (userPositionData.head.y * 20);  // shift up and down with head
+
+        // default camera positions
+        // state.camera.position.z = orient * (2 + (userPositionData.head.dist / 50)) 
+        // state.camera.position.x = 1 - orient * (userPositionData.head.x * 20); // shift side to side with head
+
+        // dynamic camera position (relative to focal point)
+        let focusX = 0
+        let focusZ = 2
+        if (focusPoint) {
+          focusX = focusPoint.x
+          focusZ = focusPoint.z
+        }
+        state.camera.position.z = focusZ + orient * (2 + (userPositionData.head.dist / 50))
+        state.camera.position.x = focusX - orient * ((userPositionData.head.x * 20)); // shift side to side with head
+
+        if (!focusPoint) {
+          state.camera.lookAt(0, 2.2, 0)
+        } else {
+          state.camera.lookAt(focusPoint) // must be Vector3
+        }
+        // state.camera.rotateX(0)
+        // state.camera.rotateY(0)
+        // set z position by keyboard
+        // state.camera.position.z = 
+      }
+
+      // Navigate View Camera Controls (Snail View)
+      if (playerState) {
+        state.camera.fov = 75;
+        state.camera.zoom = 1;
+
+        //TODO: make Generic (so you can switch between snail and plane)
+        const playerPosition = snailBodyRef.current.translation()
+        const playerCamera = new THREE.Vector3()
+        playerCamera.copy(playerPosition)
+        playerCamera.y += 0.2;
+
+        const playerCameraTarget = new THREE.Vector3()
+        playerCameraTarget.copy(playerPosition)
+        playerCameraTarget.z -= 0.25
+        playerCameraTarget.x += 0.25
+        playerCameraTarget.y += 0.1
+
+        state.camera.position.copy(playerCamera)
+        state.camera.lookAt(playerCameraTarget)
+      }
+
+      // Independent Local Rotation Method
+      const xAxis = new THREE.Vector3(1, 0, 0)
+      const yAxis = new THREE.Vector3(0, 1, 0)
+      const zAxis = new THREE.Vector3(0, 0, 1) // maybe use for plane?
+      state.camera.rotateOnAxis(xAxis, -(userPositionData.head.y * 5))
+      state.camera.rotateOnAxis(yAxis, degToRad(userPositionData.head.x * 100))
+
+      // Dependent Sequential Local Rotation Method
+      // state.camera.rotateX(degToRad(180 + (userPositionData.head.y * 60)))
+      // state.camera.rotateY(-degToRad(userPositionData.head.x * 60))
+      // state.camera.rotateZ(degToRad(180))
     }
-    if (playerState) {
-      state.camera.fov = 75;
-      state.camera.zoom = 1;
-
-      const playerPosition = snailBodyRef.current.translation()
-      const playerCamera = new THREE.Vector3()
-      playerCamera.copy(playerPosition)
-      playerCamera.y += 0.2;
-
-
-      const playerCameraTarget = new THREE.Vector3()
-      playerCameraTarget.copy(playerPosition)
-      playerCameraTarget.z -= 0.25
-      playerCameraTarget.x += 0.25
-      playerCameraTarget.y += 0.1
-
-      state.camera.position.copy(playerCamera)
-      state.camera.lookAt(playerCameraTarget)
-
-
-
-      // state.camera.position.x = snailBodyRef.current.position.x + 0
-      // state.camera.position.y = 2.2;
-      // state.camera.position.z = 0;
-      // state.camera.rotation.y = degToRad(90 + userPositionData.head.y * 50)
-      // state.camera.rotation.x = degToRad(90 + userPositionData.head.x * 50)
-      // const rotationAxies = new THREE.Vector3()
-      // rotationAxies.copy(snailBodyRef.current.)
-      // state.camera.rotateOnAxis()
-      state.camera.rotateX(degToRad(180 + (userPositionData.head.y * 60)))
-      state.camera.rotateY(-degToRad(userPositionData.head.x * 60))
-      state.camera.rotateZ(degToRad(180))
-    }
-    // cubeRef.current.rotation.y += delta
-    // groupRef.current.rotation.y -= delta * .5
   })
 
   const clickHandler = (event) => {
-    // setFocusPoint(event.point);
+    setFocusPoint(event.point);
+    //should just be 2.2m away from focus Point
+    // setCameraPosition() TODO
     // THREE.state.camera.lookAt(event.point);
     console.log('clicked something');
     console.log(event);
@@ -195,26 +292,25 @@ const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gaze
   }
 
   const snailJump = () => {
-    console.log(snailBodyRef.current)
     const mass = snailBodyRef.current.mass()
     snailBodyRef.current.applyImpulse({ x: 0, y: 0.5 * mass, z: 0 })
   }
 
-
-
-
   return <>
-    {/* <Float>
-      {/* <Text position={[0, 6, -8]} rotation-x={degToRad(45)} fontSize={1} color="black">ThreeJS Terrarium</Text> */}
-    {/* </Float> */}
+    {/* Debugging Only */}
     {/* <PerformanceMonitor /> */}
+    {/* Aerial view camera */}
+    {/* <PerspectiveCamera makeDefault position={[0, 50, 0]} zoom={1} near={0.1} far={200} /> */}
     {/* <color attach="background" args={["black"]} /> */}
+
     <PerspectiveCamera makeDefault fov={45} zoom={1} near={0.1} far={200} position={[1, 0, 3]} />
 
-    {/* Debugging Only - aerial view camera */}
-    {/* <PerspectiveCamera makeDefault position={[0, 50, 0]} zoom={1} near={0.1} far={200} /> */}
-    {/* // enabling orbit controls allows for some movement, but also pins orientation to 0,0,0 */}
+    {/* leveraging orbitcontrols for camera orientation preservation in player mode, movement options overridden - TODO: extract relevant functionality and remove*/}
     {playerState ? <OrbitControls /> : null}
+    {/* Full orbit controls in explorer mode */}
+    {inspectorView ? null : <OrbitControls />}
+
+
     {/* TODO  - Add custom high res skybox from generated images (Gan360) */}
     {/* <Environment
       background={true} // can be true, false or "only" (which only sets the background) (default: false)
@@ -223,6 +319,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gaze
       scene={undefined} // adds the ability to pass a custom THREE.Scene, can also be a ref
       encoding={undefined} // adds the ability to pass a custom THREE.TextureEncoding (default: THREE.sRGBEncoding for an array of files and THREE.LinearEncoding for a single texture)
     /> */}
+
     {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
     <Sky distance={450000} sunPosition={[0, .5, 1]} inclination={0} azimuth={0.25} />
     <Cloud
@@ -241,31 +338,26 @@ const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gaze
       segments={5} // Number of particles
       position={[-10, 10, -15]}
     />
+
+    <Lights />
     {/* <directionalLight position={[1, 2, 3]} intensity={.5} />
     <pointLight position={[10, 10, 10]} intensity={1} />
     <ambientLight intensity={0.2} color="lightblue" /> */}
-    <Lights />
-    {/* <group ref={groupRef}>
-      <mesh position-x={-2}>
-        <sphereGeometry />
-        <meshStandardMaterial color="lightBlue" />
-      </mesh>
-      <mesh ref={cubeRef} position-x={2} scale={1.5} rotation-y={Math.PI * 0.23}>
-        <boxGeometry scale={1.5} />
-        <meshStandardMaterial color="lightGreen" />
-      </mesh>
-    </group> */}
+
     <Physics>
       {/* <Debug /> */}
       <Suspense>
+
         <Table scale={2} position={[0, 0, 0]} />
         <Seat scale={2} />
-        <Snail ref={snailRef} userPositionData={userPositionData} getKeys={getKeys} snailJump={snailJump} snailBodyRef={snailBodyRef} playerState={playerState} handlePlayerState={handlePlayerState} />
-        <PivotControls anchor={[0, 0, 0]} visible={true}>
-          <Deer ref={deerRef} position={[5, 0, -6]} scale={3} />
-        </PivotControls>
-        <Fox handleClick={clickHandler} actions='walk' />
+        <Snail ref={snailRef} rotation-y={degToRad(-90)} userPositionData={userPositionData} getKeys={getKeys} snailJump={snailJump} snailBodyRef={snailBodyRef} playerState={playerState} handlePlayerState={handlePlayerState} clickHandler={clickHandler} />
 
+        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+          <Fox handleClick={clickHandler} actions='walk' />
+        </PivotControls>
+        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+          <Deer ref={deerRef} position={[5, 0, -6]} scale={3} clickHandler={clickHandler} />
+        </PivotControls>
 
         <RigidBody
           ref={flightRef}
@@ -274,15 +366,13 @@ const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gaze
           friction={0}
           type="kinematicPosition">
           <group >
-            <Plane handleClick={clickHandler} />
+            <Plane clickHandler={clickHandler} />
             {/* <mesh position={[0, 10, 8]}>
               <sphereGeometry />
             </mesh> */}
           </group>
         </RigidBody>
       </Suspense>
-
-      {/* <Clone object={<Seat />} /> */}
 
       <RigidBody type='fixed'>
         <mesh position-y={0} scale={1} >
@@ -297,6 +387,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, getKeys, gaze
         </mesh>
       </RigidBody>
     </Physics>
+
     <CustomObject ref={customRef} />
   </>
 }

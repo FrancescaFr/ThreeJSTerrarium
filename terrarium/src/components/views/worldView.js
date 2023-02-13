@@ -202,12 +202,17 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
             { name: "left", keys: ["ArrowLeft", "KeyA"] },
             { name: "right", keys: ["ArrowRight", "KeyD"] },
             { name: "space", keys: ["Space"] },
+            { name: "control", keys: ["KeyC", "Control"] },
+            { name: "escape", keys: ["Escape"] },
+            { name: "x", keys: ["KeyX"] },
+            { name: "reset", keys: ["KeyR"] },
+            { name: "shift", keys: ["Shift"] }
           ]}>
           <Canvas>
             {/* helper tools for development */}
             <axesHelper args={[10]} />
             <Stats />
-            <World userPositionData={userPositionData} gazeTracking={gazeTracking} playerState={playerState} handlePlayerState={handlePlayerState} />
+            <World userPositionData={userPositionData} gazeTracking={gazeTracking} playerState={playerState} handlePlayerState={handlePlayerState} handleCalibrate={handleCalibrate} />
             {/* <PointerLockControls /> */}
           </Canvas>
         </KeyboardControls>
