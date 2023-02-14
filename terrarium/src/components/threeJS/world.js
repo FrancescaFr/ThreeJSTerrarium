@@ -381,79 +381,78 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
 
     <Physics>
       {/* <Debug /> */}
+      {/* floor colliders */}
+      <RigidBody type="fixed">
+        <mesh position-y={-0.5} scale={1}  >
+          <boxGeometry args={[50, 1, 50]} />
+          <meshStandardMaterial transparent={true} opacity={0} />
+        </mesh>
+      </RigidBody>
+      <RigidBody type="fixed" >
+        <mesh position={[4.2, 0.35, -0.85]} scale={1} >
+          <boxGeometry args={[2.5, 0.1, 7.3]} />
+          <meshStandardMaterial color="black" transparent={true} opacity={0} />
+        </mesh>
+      </RigidBody>
+      <RigidBody type="fixed">
+        <OldTable scale={0.25} position={[3.9, 1.2, -4]} rotation-y={degToRad(-90)} onClick={clickHandler} />
+      </RigidBody>
+      <RigidBody type="fixed">
+        <Bookshelves position={[5.2, 0.4, -4]} />
+        <Bench position={[3.8, 0.4, 3.1]} rotation-y={degToRad(-90)} onClick={clickHandler} />
+      </RigidBody>
+      <RigidBody position={[3.5, 0.4, 1]} type="fixed">
+        <WoodenChair rotation-y={degToRad(80)} onClick={clickHandler} />
+      </RigidBody>
+      <RigidBody position={[4.4, 0.4, 1]} type="fixed">
+        <WoodenChair rotation-y={degToRad(-110)} onClick={clickHandler} />
+      </RigidBody>
+      <RigidBody position={[4, 0.85, 1]} type="fixed">
+        <WoodenTable scale={0.75} onClick={clickHandler} />
+      </RigidBody>
+
       <Suspense>
-        {/* floor colliders */}
-        <RigidBody type="fixed">
-          <mesh position-y={-0.5} scale={1}  >
-            <boxGeometry args={[50, 1, 50]} />
-            <meshStandardMaterial transparent={true} opacity={0} />
-          </mesh>
+        {/* non-fixed scene objects */}
+        <RigidBody position={[5, 2.6, -1.5]} colliders={false}>
+          <CylinderCollider args={[.19, 0.20]} position={[0, -0.15, 0]} />
+          <Bucket scale={0.7} onClick={clickHandler} />
         </RigidBody>
-        <RigidBody type="fixed" >
-          <mesh position={[4.2, 0.35, -0.85]} scale={1} >
-            <boxGeometry args={[2.5, 0.1, 7.3]} />
-            <meshStandardMaterial color="black" transparent={true} opacity={0} />
-          </mesh>
-        </RigidBody>
-        <RigidBody type="fixed">
-          <OldTable scale={0.25} position={[3.9, 1.2, -4]} rotation-y={degToRad(-90)} onClick={clickHandler} />
-        </RigidBody>
-        <RigidBody type="fixed">
-          <Bookshelves position={[5.2, 0.4, -4]} />
-          <Bench position={[3.8, 0.4, 3.1]} rotation-y={degToRad(-90)} onClick={clickHandler} />
-        </RigidBody>
-        <RigidBody position={[3.5, 0.4, 1]} type="fixed">
-          <WoodenChair rotation-y={degToRad(80)} onClick={clickHandler} />
-        </RigidBody>
-        <RigidBody position={[4.4, 0.4, 1]} type="fixed">
-          <WoodenChair rotation-y={degToRad(-110)} onClick={clickHandler} />
-        </RigidBody>
-        <RigidBody position={[4, 0.85, 1]} type="fixed">
-          <WoodenTable scale={0.75} onClick={clickHandler} />
-        </RigidBody>
-      </Suspense >
-
-      {/* non-fixed scene objects */}
-      <RigidBody position={[5, 2.6, -1.5]} colliders={false}>
-        <CylinderCollider args={[.19, 0.20]} position={[0, -0.15, 0]} />
-        <Bucket scale={0.7} onClick={clickHandler} />
-      </RigidBody>
-      <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+          <RigidBody>
+            <CuttingBoard position={[3.5, 1.4, -3.8]} onClick={clickHandler} />
+          </RigidBody>
+        </PivotControls>
         <RigidBody>
-          <CuttingBoard position={[3.5, 1.4, -3.8]} onClick={clickHandler} />
+          <Stool position={[5.5, 0.5, -2.7]} onClick={clickHandler} />
         </RigidBody>
-      </PivotControls>
-      <RigidBody>
-        <Stool position={[5.5, 0.5, -2.7]} onClick={clickHandler} />
-      </RigidBody>
-      <group >
-        <RigidBody >
-          {/* <CylinderCollider args={[0.2, 0.2]} rotation-x={degToRad(90)} /> */}
+        <group >
+          <RigidBody >
+            {/* <CylinderCollider args={[0.2, 0.2]} rotation-x={degToRad(90)} /> */}
 
-          <Snail
-            scale={5}
-            position={[0, 0.25, 0]}
-            ref={snailRef}
-            rotation-y={degToRad(-90)}
-            userPositionData={userPositionData}
-            getKeys={getKeys}
-            snailJump={snailJump}
-            snailBodyRef={snailBodyRef}
-            playerState={playerState}
-            handlePlayerState={handlePlayerState}
-            clickHandler={clickHandler} />
-        </RigidBody>
+            <Snail
+              scale={5}
+              position={[0, 0.25, 0]}
+              ref={snailRef}
+              rotation-y={degToRad(-90)}
+              userPositionData={userPositionData}
+              getKeys={getKeys}
+              snailJump={snailJump}
+              snailBodyRef={snailBodyRef}
+              playerState={playerState}
+              handlePlayerState={handlePlayerState}
+              clickHandler={clickHandler} />
+          </RigidBody>
 
-        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
-          <Fox position={[- 8, 0.5, -1]} handleClick={clickHandler} foxActions={foxActions} />
-        </PivotControls>
+          <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+            <Fox position={[- 8, 0.5, -1]} handleClick={clickHandler} foxActions={foxActions} />
+          </PivotControls>
 
 
-        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
-          <Deer ref={deerRef} position={[-8, 0.5, 15]} scale={1.5} clickHandler={clickHandler} />
-        </PivotControls>
-      </group>
-
+          <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+            <Deer ref={deerRef} position={[-8, 0.5, 15]} scale={1.5} clickHandler={clickHandler} />
+          </PivotControls>
+        </group>
+      </Suspense>
       <RigidBody
         ref={flightRef}
         rotation-y={degToRad(90)}
