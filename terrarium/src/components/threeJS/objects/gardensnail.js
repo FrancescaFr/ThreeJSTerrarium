@@ -68,6 +68,7 @@ export default function Snail(props) {
   return (
     <RigidBody
       ref={props.snailBodyRef}
+      position={props.navStart}
       restitution={0}
       friction={0}
       linearDamping={0.75}
@@ -78,7 +79,7 @@ export default function Snail(props) {
       <group {...props}
         ref={snailRef}
         dispose={null}
-        scale={0.005}
+        scale={0.004}
         visible={!props.playerState}
         onDoubleClick={() => {
           setActive(!active);

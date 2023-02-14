@@ -86,6 +86,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
   const [zShift, setZshift] = useState(0);
   const [pivotView, setPivotView] = useState(false);
   const [foxActions, setFoxActions] = useState(0);
+  const [navStart, setNavStart] = useState([4, 3, 1.5]);
 
 
 
@@ -185,7 +186,9 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
         if (value) {
           console.log('spacebar function')
           //Flip Navigation View 
-          setSide(!side)
+          if (!playerState) {
+            setSide(!side)
+          }
         }
       }
     )
@@ -432,22 +435,17 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
         </RigidBody>
 
         <group >
-          <RigidBody >
-            {/* <CylinderCollider args={[0.2, 0.2]} rotation-x={degToRad(90)} /> */}
 
-            <Snail
-              scale={5}
-              position={[0, 0.25, 0]}
-              ref={snailRef}
-              rotation-y={degToRad(-90)}
-              userPositionData={userPositionData}
-              getKeys={getKeys}
-              snailJump={snailJump}
-              snailBodyRef={snailBodyRef}
-              playerState={playerState}
-              handlePlayerState={handlePlayerState}
-              clickHandler={clickHandler} />
-          </RigidBody>
+          <Snail
+            navStart={navStart}
+            ref={snailRef}
+            userPositionData={userPositionData}
+            getKeys={getKeys}
+            snailJump={snailJump}
+            snailBodyRef={snailBodyRef}
+            playerState={playerState}
+            handlePlayerState={handlePlayerState}
+            clickHandler={clickHandler} />
 
         </group>
       </Suspense>
