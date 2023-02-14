@@ -344,6 +344,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     {orbitState ? <OrbitControls /> : null}
 
     {/* TODO  - Add custom high res skybox from generated images (Gan360) */}
+
     <Environment
       background={true} // can be true, false or "only" (which only sets the background) (default: false)
       blur={0} // blur factor between 0 and 1 (default: 0, only works with three 0.146 and up)
@@ -353,7 +354,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     />
 
     {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
-    <Sky distance={450000} sunPosition={[0, .5, 1]} inclination={0} azimuth={0.25} />
+    {/* <Sky distance={450000} sunPosition={[0, .5, 1]} inclination={0} azimuth={0.25} /> */}
     <Cloud
       opacity={0.5}
       speed={0.3} // Rotation speed
@@ -375,10 +376,11 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     {/* {/* <directionalLight position={[1, 2, 3]} intensity={.5} /> */}
     <pointLight position={[10, 10, 10]} intensity={1} />
     <ambientLight intensity={0.2} color="lightblue" />
-    <PineForest position={[-1, 0, -2]} scale={1.1} rotation-y={degToRad(-45)} />
-    <StumpAxe position={[1, 1, 1]} />
-    <Outbuilding scale={1.25} position={[-14, 0, -1]} />
-
+    <Suspense>
+      <PineForest position={[-1, 0, -2]} scale={1.1} rotation-y={degToRad(-45)} />
+      <StumpAxe position={[1, 1, 1]} />
+      <Outbuilding scale={1.25} position={[-14, 0, -1]} />
+    </Suspense>
     <Physics>
       {/* <Debug /> */}
       {/* floor colliders */}
@@ -394,22 +396,24 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
           <meshStandardMaterial color="black" transparent={true} opacity={0} />
         </mesh>
       </RigidBody>
-      <RigidBody type="fixed">
-        <OldTable scale={0.25} position={[3.9, 1.2, -4]} rotation-y={degToRad(-90)} onClick={clickHandler} />
-      </RigidBody>
-      <RigidBody type="fixed">
-        <Bookshelves position={[5.2, 0.4, -4]} />
-        <Bench position={[3.8, 0.4, 3.1]} rotation-y={degToRad(-90)} onClick={clickHandler} />
-      </RigidBody>
-      <RigidBody position={[3.5, 0.4, 1]} type="fixed">
-        <WoodenChair rotation-y={degToRad(80)} onClick={clickHandler} />
-      </RigidBody>
-      <RigidBody position={[4.4, 0.4, 1]} type="fixed">
-        <WoodenChair rotation-y={degToRad(-110)} onClick={clickHandler} />
-      </RigidBody>
-      <RigidBody position={[4, 0.85, 1]} type="fixed">
-        <WoodenTable scale={0.75} onClick={clickHandler} />
-      </RigidBody>
+      <Suspense>
+        <RigidBody type="fixed">
+          <OldTable scale={0.25} position={[3.9, 1.2, -4]} rotation-y={degToRad(-90)} onClick={clickHandler} />
+        </RigidBody>
+        <RigidBody type="fixed">
+          <Bookshelves position={[5.2, 0.4, -4]} />
+          <Bench position={[3.8, 0.4, 3.1]} rotation-y={degToRad(-90)} onClick={clickHandler} />
+        </RigidBody>
+        <RigidBody position={[3.5, 0.4, 1]} type="fixed">
+          <WoodenChair rotation-y={degToRad(80)} onClick={clickHandler} />
+        </RigidBody>
+        <RigidBody position={[4.4, 0.4, 1]} type="fixed">
+          <WoodenChair rotation-y={degToRad(-110)} onClick={clickHandler} />
+        </RigidBody>
+        <RigidBody position={[4, 0.85, 1]} type="fixed">
+          <WoodenTable scale={0.75} onClick={clickHandler} />
+        </RigidBody>
+      </Suspense>
 
       <Suspense>
         {/* non-fixed scene objects */}
@@ -425,6 +429,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
         <RigidBody>
           <Stool position={[5.5, 0.5, -2.7]} onClick={clickHandler} />
         </RigidBody>
+
         <group >
           <RigidBody >
             {/* <CylinderCollider args={[0.2, 0.2]} rotation-x={degToRad(90)} /> */}
@@ -443,16 +448,9 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
               clickHandler={clickHandler} />
           </RigidBody>
 
-          <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
-            <Fox position={[- 8, 0.5, -1]} handleClick={clickHandler} foxActions={foxActions} />
-          </PivotControls>
-
-
-          <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
-            <Deer ref={deerRef} position={[-8, 0.5, 15]} scale={1.5} clickHandler={clickHandler} />
-          </PivotControls>
         </group>
       </Suspense>
+
       <RigidBody
         ref={flightRef}
         rotation-y={degToRad(90)}
@@ -513,6 +511,15 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
   </group> */}
 
     </Physics >
+
+    <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+      <Fox position={[- 8, 0.5, -1]} handleClick={clickHandler} foxActions={foxActions} />
+    </PivotControls>
+
+
+    <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+      <Deer ref={deerRef} position={[-8, 0.5, 15]} scale={1.5} clickHandler={clickHandler} />
+    </PivotControls>
   </>
 }
 
