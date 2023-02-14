@@ -12,16 +12,15 @@ import Box from '@mui/material/Box';
 import { List, ListItem, ListItemText, Typography } from '@mui/material'; //Item, Drawer, Menu, MenuItem, MenuList,
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import Popover from '@mui/material/Popover';
+
 
 
 // Components, custom function imports
 import World from '../threeJS/world';
 import WebGazerData from '../tracking/webGazerData';
-import EyePrediction from './eyePrediction';
-import FilterSlider from './filterSlider';
-import InfoPopup from './infoPopup';
+import EyePrediction from '../tracking/eyePrediction';
+import FilterSlider from '../uiElements/filterSlider'
+import InfoPopup from '../uiElements/infoPopup';
 
 
 const webgazer = window.webgazer
@@ -213,8 +212,8 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
           ]}>
           <Canvas>
             {/* helper tools for Debugging */}
-            {/* <axesHelper args={[10]} />
-            <Stats /> */}
+            {/* <axesHelper args={[10, 5]} /> */}
+            {/* <Stats /> */}
             <World
               userPositionData={userPositionData}
               gazeTracking={gazeTracking}

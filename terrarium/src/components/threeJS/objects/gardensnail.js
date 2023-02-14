@@ -19,7 +19,7 @@ export default function Snail(props) {
   const [active, setActive] = useState(false)
   const [hover, setHover] = useState(false)
 
-  const [subscribeKeys, getKeys] = useKeyboardControls()
+  const [, getKeys] = useKeyboardControls()
 
   useFrame((state, delta) => {
     if (!snailRef.current) { return; }
@@ -27,7 +27,7 @@ export default function Snail(props) {
     const { forward, backward, left, right } = getKeys()
     // console.log(keys)
     const impulseStrength = .04 * delta
-    const torqueStrength = .01 * delta
+    // const torqueStrength = .01 * delta
     const impulse = { x: 0, y: 0, z: 0 }
     const torque = { x: 0, y: 0, z: 0 }
 
@@ -72,22 +72,27 @@ export default function Snail(props) {
       friction={0}
       linearDamping={0.75}
       angularDamping={0.9}
-      position={[0, 1.8, .9]}
       rotation-y={degToRad(-90)}
       onClick={props.clickHandler}
     >
-      <group {...props} ref={snailRef} dispose={null} scale={0.002} visible={!props.playerState} onDoubleClick={() => {
-        setActive(!active);
-        props.handlePlayerState();
-      }} onClick={() => {
-        props.snailJump();
-      }}
+      <group {...props}
+        ref={snailRef}
+        dispose={null}
+        scale={0.002}
+        visible={!props.playerState}
+        onDoubleClick={() => {
+          setActive(!active);
+          props.handlePlayerState();
+        }} onClick={() => {
+          props.snailJump();
+        }}
         onPointerOver={() => {
           setHover(true);
         }}
         onPointerOut={() => {
           setHover(false);
-        }}>
+        }}
+      >
         <mesh
           castShadow
           receiveShadow
@@ -133,7 +138,7 @@ export default function Snail(props) {
           geometry={nodes.garden_snail_1_6.geometry}
           material={materials.body}
         >
-          {hover ? <meshStandardMaterial {...floorColorMap} /> : <meshStandardMaterial {...shellColorMap} />}
+          {hover ? <meshStandardMaterial color="yellow" /> : <meshStandardMaterial {...shellColorMap} />}
         </mesh>
       </group >
     </RigidBody>

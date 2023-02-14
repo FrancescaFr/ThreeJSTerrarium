@@ -3,7 +3,7 @@ import './calibrationView.css'
 // import '../App.css'
 import { useEffect, useState } from "react";
 import { Box, Button, Card, CardContent, CardActions, Typography } from '@mui/material';
-import CalibrationButtons from './calibrationButtons';
+import CalibrationButtons from '../uiElements/calibrationButtons';
 
 // import { styled } from '@mui/material/styles';
 // import Box from '@mui/material/Box';

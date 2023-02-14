@@ -2,33 +2,33 @@
 import { useGLTF, useAnimations, meshBounds } from "@react-three/drei";
 import { useEffect } from "react";
 
-export default function Fox({actions, handleClick}){
+export default function Fox({foxActions, handleClick, position}){
 
     useEffect(() => {
-        let action;
-        if(actions){
-            
-            if (actions ==='run'){
+        let action; 
+        if (foxActions){
+            if (foxActions === 2){
                 action = animations.actions.Run
-            } else if (actions === 'walk'){
+                action.reset().fadeIn(0.5).play()
+            } else if (foxActions === 1){
                 action = animations.actions.Walk
-            }
-            action.reset().fadeIn(0.5).play()  
+                action.reset().fadeIn(0.5).play()
+            } 
+        } else {
+            action = animations.actions.Walk
         }
-
         return () => {
             action.fadeOut(0.5)
         }
-
-    },[actions])
+    },[foxActions])
 
     const fox = useGLTF('/models/Fox/Fox.gltf')
     const animations = useAnimations(fox.animations, fox.scene)
 
     return <primitive 
         object={ fox.scene } 
-        scale={ 0.005 }
-        position={ [ 0.7, 1.8, -0.7 ] }
+        scale={ 0.01 }
+        position={position}
         rotation-y={ 0.3 }
         raycast={meshBounds}
         onClick={handleClick}

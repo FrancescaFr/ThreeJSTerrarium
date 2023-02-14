@@ -1,15 +1,15 @@
-import { React, useRef, useState, useEffect, Suspense } from 'react'
+import { React, useRef, useState, Suspense } from 'react'
 import * as THREE from 'three';
 import { degToRad } from 'three/src/math/MathUtils';
-import { useControls } from 'leva';
-import { Physics, RigidBody, Debug } from '@react-three/rapier'
+// import { useControls } from 'leva';
+import { Physics, CylinderCollider, RigidBody, Debug } from '@react-three/rapier'
 
 import { useFrame, useThree } from "@react-three/fiber"; //useThree, 
 import {
   OrbitControls, PivotControls, useKeyboardControls,
   PerspectiveCamera, useProgress,
   Stars, Sky, Cloud, Environment, useTexture,
-  Text, Float,
+  Text, Float, Html,
   MeshReflectorMaterial,
   useGLTF, Clone, useAnimations,
   meshBounds
@@ -21,14 +21,29 @@ import {
 // import {useLoader} from "@react-three/fiber"
 
 // ------------- model / scene asset imports ------------
-import Table from './objects/table'
-import Seat from './objects/seat'
+import PineForest from './Scene/Terrain/pineForest';
+import Outbuilding from './objects/outbuilding';
+import OldTable from './objects/oldTable';
+import StumpAxe from './objects/stumpAxe';
+import Bucket from './objects/bucket';
+import Bookshelves from './objects/bookshelves';
+import Bench from './objects/bench';
+import CuttingBoard from './objects/cuttingBoard';
+import Stool from './objects/stool';
+import WoodenChair from './objects/woodenChair';
+import WoodenTable from './objects/woodenTable';
+
+
+import Table from './objects/table';
+import Seat from './objects/seat';
+
 import Snail from './objects/gardensnail';
 import Fox from './objects/fox';
 import Deer from './objects/deer';
 import Plane from './objects/plane';
 import CustomObject from './customObject';
-import Lights from './Scene/Lights/index';
+import Lights from './Scene/Lights/lights';
+import { MeshStandardMaterial } from 'three';
 
 
 const World = ({ userPositionData, playerState, handlePlayerState, orbitState, handleOrbitState, gazeTracking, handleCalibrate, setFullScreenState, setPlayerState }) => {
@@ -68,9 +83,10 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
   const [xShift, setXshift] = useState(0);
   const [zShift, setZshift] = useState(0);
   const [pivotView, setPivotView] = useState(false);
-  // const [inspectorView, setInspectorView] = useState(true);
+  const [foxActions, setFoxActions] = useState(0);
 
   const floorColorMap = useTexture({ map: 'textures/wood-texture-wild-hardwood-e68adc3402684d76a8f36b4238aaeda4.jpg' })
+  const wallColorMap = useTexture({ map: 'textures/logWall.jpg' })
 
   //keyboard Controls
   const [subscribeKeys, getKeys] = useKeyboardControls()
@@ -88,9 +104,9 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     const quaternionRotation = new THREE.Quaternion()
     quaternionRotation.setFromEuler(eulerRotation) // rotation around y
     flightRef.current.setNextKinematicRotation(quaternionRotation)
-    const x = -Math.cos(angle) * 10
-    const z = -Math.sin(angle) * 10
-    flightRef.current.setNextKinematicTranslation({ x: x, y: 8, z: z })
+    const x = -Math.cos(angle) * 15
+    const z = -Math.sin(angle) * 15
+    flightRef.current.setNextKinematicTranslation({ x: x, y: 11, z: z })
 
     // BUTTON PRESSES 
     // check for scene reset   
@@ -241,28 +257,41 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
 
         state.camera.position.copy(playerCamera)
         state.camera.lookAt(playerCameraTarget)
+
+
+        // Independent Local Rotation Method
+        const xAxis = new THREE.Vector3(1, 0, 0)
+        const yAxis = new THREE.Vector3(0, 1, 0)
+        const zAxis = new THREE.Vector3(0, 0, 1) // maybe use for plane?
+        state.camera.rotateOnAxis(xAxis, -(userPositionData.head.y * 5))
+        state.camera.rotateOnAxis(yAxis, degToRad(userPositionData.head.x * 100))
+
+        // Dependent Sequential Local Rotation Method
+        // state.camera.rotateX(degToRad(180 + (userPositionData.head.y * 60)))
+        // state.camera.rotateY(-degToRad(userPositionData.head.x * 60))
+        // state.camera.rotateZ(degToRad(180))
       }
-
-      // Independent Local Rotation Method
-      const xAxis = new THREE.Vector3(1, 0, 0)
-      const yAxis = new THREE.Vector3(0, 1, 0)
-      const zAxis = new THREE.Vector3(0, 0, 1) // maybe use for plane?
-      state.camera.rotateOnAxis(xAxis, -(userPositionData.head.y * 5))
-      state.camera.rotateOnAxis(yAxis, degToRad(userPositionData.head.x * 100))
-
-      // Dependent Sequential Local Rotation Method
-      // state.camera.rotateX(degToRad(180 + (userPositionData.head.y * 60)))
-      // state.camera.rotateY(-degToRad(userPositionData.head.x * 60))
-      // state.camera.rotateZ(degToRad(180))
     }
   })
+
+  // function Loader() {
+  //   const { active, progress, errors, item, loaded, total } = useProgress()
+  //   return <Html center>{progress}.toFixed(0) % loaded</Html>
+  // }
 
   const clickHandler = (event) => {
     setFocusPoint(event.point);
     setZshift(0);
     setXshift(0);
-    // console.log('assigned focus');
-    // console.log(event);
+    if (event.object.name === "fox") {
+      if (foxActions === 2) {
+        setFoxActions(0);
+      } else {
+        setFoxActions(foxActions + 1);
+      }
+    }
+    console.log('assigned focus');
+    console.log(event);
 
   }
 
@@ -288,13 +317,13 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     {orbitState ? <OrbitControls /> : null}
 
     {/* TODO  - Add custom high res skybox from generated images (Gan360) */}
-    {/* <Environment
+    <Environment
       background={true} // can be true, false or "only" (which only sets the background) (default: false)
       blur={0} // blur factor between 0 and 1 (default: 0, only works with three 0.146 and up)
       preset="forest"
       scene={undefined} // adds the ability to pass a custom THREE.Scene, can also be a ref
       encoding={undefined} // adds the ability to pass a custom THREE.TextureEncoding (default: THREE.sRGBEncoding for an array of files and THREE.LinearEncoding for a single texture)
-    /> */}
+    />
 
     {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
     <Sky distance={450000} sunPosition={[0, .5, 1]} inclination={0} azimuth={0.25} />
@@ -315,63 +344,150 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       position={[-10, 10, -15]}
     />
 
-    <Lights />
-    {/* <directionalLight position={[1, 2, 3]} intensity={.5} />
+    {/* <Lights /> */}
+    {/* {/* <directionalLight position={[1, 2, 3]} intensity={.5} /> */}
     <pointLight position={[10, 10, 10]} intensity={1} />
-    <ambientLight intensity={0.2} color="lightblue" /> */}
+    <ambientLight intensity={0.2} color="lightblue" />
+    <PineForest position={[-1, 0, -2]} scale={1.1} rotation-y={degToRad(-45)} />
+    <StumpAxe position={[1, 1, 1]} />
+    <Outbuilding scale={1.25} position={[-14, 0, -1]} />
+
 
     <Physics>
       {/* <Debug /> */}
       <Suspense>
-
-        <Table scale={2} position={[0, 0, 0]} />
-        <Seat scale={2} />
-        <Snail
-          ref={snailRef}
-          rotation-y={degToRad(-90)}
-          userPositionData={userPositionData}
-          getKeys={getKeys}
-          snailJump={snailJump}
-          snailBodyRef={snailBodyRef}
-          playerState={playerState}
-          handlePlayerState={handlePlayerState}
-          clickHandler={clickHandler} />
-
-        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
-          <Fox handleClick={clickHandler} actions='walk' />
-        </PivotControls>
-        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
-          <Deer ref={deerRef} position={[5, 0, -6]} scale={3} clickHandler={clickHandler} />
-        </PivotControls>
-
-        <RigidBody
-          ref={flightRef}
-          position={[0, 10, -8]}
-          rotation-y={degToRad(90)}
-          friction={0}
-          type="kinematicPosition">
-          <group >
-            <Plane clickHandler={clickHandler} />
-          </group>
+        {/* floor colliders */}
+        <RigidBody type="fixed">
+          <mesh position-y={-0.5} scale={1}  >
+            <boxGeometry args={[50, 1, 50]} />
+            <meshStandardMaterial transparent={true} opacity={0} />
+          </mesh>
         </RigidBody>
-      </Suspense>
+        <RigidBody type="fixed" >
+          <mesh position={[4.2, 0.35, -0.85]} scale={1} >
+            <boxGeometry args={[2.5, 0.1, 7.3]} />
+            <meshStandardMaterial color="black" transparent={true} opacity={0} />
+          </mesh>
+        </RigidBody>
+        <RigidBody type="fixed">
+          <OldTable scale={0.25} position={[3.9, 1.25, -4]} rotation-y={degToRad(-90)} onClick={clickHandler} />
+        </RigidBody>
+        <RigidBody type="fixed">
+          <Bookshelves position={[5.2, 0.4, -4]} />
+          <Bench position={[3.8, 0.4, 3.1]} rotation-y={degToRad(-90)} onClick={clickHandler} />
+        </RigidBody>
+        <RigidBody position={[3.5, 0.4, 1]} type="fixed">
+          <WoodenChair rotation-y={degToRad(80)} onClick={clickHandler} />
+        </RigidBody>
+        <RigidBody position={[4.4, 0.4, 1]} type="fixed">
+          <WoodenChair rotation-y={degToRad(-110)} onClick={clickHandler} />
+        </RigidBody>
+        <RigidBody position={[4, 0.85, 1]} type="fixed">
+          <WoodenTable scale={0.75} onClick={clickHandler} />
+        </RigidBody>
+      </Suspense >
 
-      <RigidBody type='fixed'>
-        <mesh position-y={0} scale={1} >
-          <boxGeometry args={[100, .2, 100]} />
-          {/* for debugging */}
-          {/* <meshStandardMaterial color="black" /> */}
-          <MeshReflectorMaterial
-            resolution={512}
-            blur={[1000, 1000]}
-            mixBlur={1}
-            mirror={0.25}
-            {...floorColorMap} />
-        </mesh>
+      {/* non-fixed scene objects */}
+      <RigidBody position={[5, 2.6, -1.5]} colliders={false}>
+        <CylinderCollider args={[.19, 0.20]} position={[0, -0.15, 0]} />
+        <Bucket scale={0.7} onClick={clickHandler} />
       </RigidBody>
-    </Physics>
+      <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+        <RigidBody>
+          <CuttingBoard position={[3.5, 1.4, -3.8]} onClick={clickHandler} />
+        </RigidBody>
+      </PivotControls>
+      <RigidBody>
+        <Stool position={[5.5, 0.5, -2.7]} onClick={clickHandler} />
+      </RigidBody>
+      <group >
+        <RigidBody >
+          {/* <CylinderCollider args={[0.2, 0.2]} rotation-x={degToRad(90)} /> */}
 
-    <CustomObject ref={customRef} />
+          <Snail
+            scale={5}
+            position={[0, 0.25, 0]}
+            ref={snailRef}
+            rotation-y={degToRad(-90)}
+            userPositionData={userPositionData}
+            getKeys={getKeys}
+            snailJump={snailJump}
+            snailBodyRef={snailBodyRef}
+            playerState={playerState}
+            handlePlayerState={handlePlayerState}
+            clickHandler={clickHandler} />
+        </RigidBody>
+
+        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+          <Fox position={[- 8, 0.5, -1]} handleClick={clickHandler} foxActions={foxActions} />
+        </PivotControls>
+
+
+        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+          <Deer ref={deerRef} position={[-8, 0.5, 15]} scale={1.5} clickHandler={clickHandler} />
+        </PivotControls>
+      </group>
+
+      <RigidBody
+        ref={flightRef}
+        rotation-y={degToRad(90)}
+        friction={0}
+        type="kinematicPosition">
+        <group >
+          <Plane clickHandler={clickHandler} />
+        </group>
+      </RigidBody>
+
+      {/* <group >
+          <RigidBody type='fixed'>
+            <mesh position-y={-0.5} scale={1} >
+              <boxGeometry args={[10, 1, 10]} />
+
+        <MeshReflectorMaterial
+          resolution={512}
+          blur={[1000, 1000]}
+          mixBlur={1}
+          mirror={0.25}
+          {...floorColorMap} />
+      </mesh>
+    </RigidBody>
+    <RigidBody type='fixed'>
+      <mesh position-z={-5} position-y={2.5} scale={1} rotation-x={degToRad(90)} >
+        <boxGeometry args={[10, .2, 5]} />
+
+        <meshStandardMaterial
+          // <MeshReflectorMaterial
+          //   resolution={512}
+          //   blur={[1000, 1000]}
+          //   mixBlur={2}
+          //   mirror={0.15}
+          {...wallColorMap} />
+      </mesh>
+    </RigidBody>
+    <RigidBody type='fixed'>
+      <mesh
+        scale={1}
+        // position-z={-5}
+        position-y={2.5}
+        position-x={5}
+        rotation-x={degToRad(90)}
+        rotation-z={degToRad(-90)} >
+        <boxGeometry args={[10, .2, 5]} />
+        <meshStandardMaterial
+          // <MeshReflectorMaterial
+          //   resolution={512}
+          //   blur={[1000, 1000]}
+          //   mixBlur={2}
+          //   mirror={0.15}
+          {...wallColorMap} />
+      </mesh>
+    </RigidBody>
+  </group> */}
+
+    </Physics >
+
+
+    {/* <CustomObject ref={customRef} /> */}
   </>
 }
 
