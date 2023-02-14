@@ -350,7 +350,6 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       blur={0} // blur factor between 0 and 1 (default: 0, only works with three 0.146 and up)
       preset="forest"
       scene={undefined} // adds the ability to pass a custom THREE.Scene, can also be a ref
-      encoding={undefined} // adds the ability to pass a custom THREE.TextureEncoding (default: THREE.sRGBEncoding for an array of files and THREE.LinearEncoding for a single texture)
     />
 
     {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
@@ -373,12 +372,13 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     />
 
     {/* <Lights /> */}
-    {/* {/* <directionalLight position={[1, 2, 3]} intensity={.5} /> */}
+    <directionalLight position={[1, 2, 3]} intensity={.5} />
     <pointLight position={[10, 10, 10]} intensity={1} />
     <ambientLight intensity={0.2} color="lightblue" />
-    <Suspense>
+    <Suspense fallback={<LoadingScreen />}>
       <PineForest position={[-1, 0, -2]} scale={1.1} rotation-y={degToRad(-45)} />
-      <StumpAxe position={[1, 1, 1]} />
+    </Suspense>
+    <Suspense>
       <Outbuilding scale={1.25} position={[-14, 0, -1]} />
     </Suspense>
     <Physics>
@@ -393,7 +393,8 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       <RigidBody type="fixed" >
         <mesh position={[4.2, 0.35, -0.85]} scale={1} >
           <boxGeometry args={[2.5, 0.1, 7.3]} />
-          <meshStandardMaterial color="black" transparent={true} opacity={0} />
+          <meshStandardMaterial transparent={true} opacity={0} />
+          {/* <MeshReflectorMaterial  {...wallColorMap} /> */}
         </mesh>
       </RigidBody>
       <Suspense>
