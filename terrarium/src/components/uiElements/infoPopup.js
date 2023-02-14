@@ -41,8 +41,9 @@ export default function InfoPopup({ containerRef }) {
         <div className="popup">
           <Typography sx={{ p: 2 }}>
             <body>
+
               <p><b>Move </b>[Arrow Keys / WASD]</p>
-              <p><b>Flip View</b> [Spacebar]</p>d
+              <p><b>Flip View</b> [Spacebar]</p>
               <p><b>Reset View </b> [X]</p>
               <p><b>Pivot Controls</b> [C]</p>
               <p><b>Reset Scene</b> [R]</p>

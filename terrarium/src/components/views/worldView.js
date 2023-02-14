@@ -1,6 +1,6 @@
 import './worldView.css'
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stats, KeyboardControls } from '@react-three/drei';
 import { FullScreen, useFullScreenHandle } from 'react-full-screen';
@@ -21,6 +21,7 @@ import WebGazerData from '../tracking/webGazerData';
 import EyePrediction from '../tracking/eyePrediction';
 import FilterSlider from '../uiElements/filterSlider'
 import InfoPopup from '../uiElements/infoPopup';
+import LoadingScreen from './loadingScreen';
 
 
 const webgazer = window.webgazer
@@ -134,11 +135,11 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
     }
   }
 
-  const recalibrate = () => {
-    webgazer.clearData();
-    webgazer.end();
-    handleCalibrate();
-  }
+  // const recalibrate = () => {
+  //   webgazer.clearData();
+  //   webgazer.end();
+  //   handleCalibrate();
+  // }
 
 
   return <div >
@@ -189,12 +190,12 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
         {!orbitState &&
           <Box className="fullscreen-buttons">
             {playerState ?
-              <Button onClick={handlePlayerState}> Navigation Mode </Button> :
-              <Button onClick={handlePlayerState}> Inspect Mode </Button>}
+              <Button onClick={handlePlayerState}> <div style={{ color: "black" }}>Navigation Mode</div> </Button> :
+              <Button onClick={handlePlayerState}> <div style={{ color: "black" }}>Inspect Mode </div></Button>}
           </Box>}
         {orbitState &&
           <Box className="fullscreen-buttons">
-            <Button onClick={handleOrbitState}> Mouse Control Mode </Button>
+            <Button onClick={handleOrbitState}> <div style={{ color: "black" }}>Mouse Control Mode </div></Button>
           </Box>}
 
         <KeyboardControls
@@ -224,13 +225,12 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
               orbitState={orbitState}
               handleOrbitState={handleOrbitState}
               setFullScreenState={setFullScreenState} />
-            {/* <PointerLockControls /> */}
           </Canvas>
         </KeyboardControls>
       </div >
-    </FullScreen>
+    </FullScreen >
 
-  </div>
+  </div >
 
 }
 
