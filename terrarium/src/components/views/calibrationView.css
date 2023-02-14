@@ -27,7 +27,7 @@
 }
 
 .main-calibration-view {
-    z-index: 3;
+    z-index: 2;
     position: absolute;
     display: flex;
     width: 100vw;
@@ -41,4 +41,15 @@
     display: flex;
     text-align: center;
     justify-content: center;
+}
+
+.loading-screen {
+    z-index: 3;
+    position: absolute;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(59, 70, 174, 0.341);
 }

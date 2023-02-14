@@ -15,6 +15,8 @@ import {
   meshBounds
 } from "@react-three/drei";
 
+import LoadingScreen from '../views/loadingScreen';
+
 //--- Imports for incomplete or commented-out features
 // import { FirstPersonControls, FirstPersonControlsProps } from '@react-three/drei';
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -84,6 +86,31 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
   const [zShift, setZshift] = useState(0);
   const [pivotView, setPivotView] = useState(false);
   const [foxActions, setFoxActions] = useState(0);
+
+
+
+  // create an AudioListener and add it to the camera
+  // useEffect(() => {
+  //   const listener = new THREE.AudioListener();
+  //     // create a global audio source
+  //   const sound = new THREE.Audio(listener);
+  // }, []);
+
+  // useThree(({ camera }) => {
+  //   camera.add(listener);
+  // });
+
+
+
+  // // load a sound and set it as the Audio object's buffer
+  // const audioLoader = new THREE.AudioLoader();
+  // audioLoader.load('audio/forestSounds.mp3', function (buffer) {
+  //   sound.setBuffer(buffer);
+  //   sound.setLoop(true);
+  //   sound.setVolume(0.5);
+  //   sound.play();
+  // });
+
 
   const floorColorMap = useTexture({ map: 'textures/wood-texture-wild-hardwood-e68adc3402684d76a8f36b4238aaeda4.jpg' })
   const wallColorMap = useTexture({ map: 'textures/logWall.jpg' })
@@ -352,7 +379,6 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     <StumpAxe position={[1, 1, 1]} />
     <Outbuilding scale={1.25} position={[-14, 0, -1]} />
 
-
     <Physics>
       {/* <Debug /> */}
       <Suspense>
@@ -370,7 +396,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
           </mesh>
         </RigidBody>
         <RigidBody type="fixed">
-          <OldTable scale={0.25} position={[3.9, 1.25, -4]} rotation-y={degToRad(-90)} onClick={clickHandler} />
+          <OldTable scale={0.25} position={[3.9, 1.2, -4]} rotation-y={degToRad(-90)} onClick={clickHandler} />
         </RigidBody>
         <RigidBody type="fixed">
           <Bookshelves position={[5.2, 0.4, -4]} />
@@ -438,6 +464,9 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
         </group>
       </RigidBody>
 
+      {/* <CustomObject ref={customRef} /> */}
+
+
       {/* <group >
           <RigidBody type='fixed'>
             <mesh position-y={-0.5} scale={1} >
@@ -485,9 +514,6 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
   </group> */}
 
     </Physics >
-
-
-    {/* <CustomObject ref={customRef} /> */}
   </>
 }
 

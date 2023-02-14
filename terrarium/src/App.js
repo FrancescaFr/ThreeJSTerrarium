@@ -1,8 +1,9 @@
 import './App.css';
-import { React } from 'react'
+import { React, Suspense } from 'react'
 import { useState } from 'react';
 import CalibrationView from './components/views/calibrationView';
 import WorldView from './components/views/worldView';
+import LoadingScreen from './components/views/loadingScreen';
 
 const webgazer = window.webgazer
 

@@ -26,7 +26,7 @@ export default function Snail(props) {
     // if (active) {
     const { forward, backward, left, right } = getKeys()
     // console.log(keys)
-    const impulseStrength = .04 * delta
+    const impulseStrength = 0.4 * delta;
     // const torqueStrength = .01 * delta
     const impulse = { x: 0, y: 0, z: 0 }
     const torque = { x: 0, y: 0, z: 0 }
@@ -78,7 +78,7 @@ export default function Snail(props) {
       <group {...props}
         ref={snailRef}
         dispose={null}
-        scale={0.002}
+        scale={0.005}
         visible={!props.playerState}
         onDoubleClick={() => {
           setActive(!active);
