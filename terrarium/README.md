@@ -27,9 +27,9 @@ Eyegaze predictions from Webgazer are currently too innaccurate to be used for m
 - Arrow Keys/WASD to move
 - Spacebar to flip view 180deg
 - Shift to switch to mouse control
-- \-[X] to reset to default view
-- [C] to enable pivot controls
-- [R]  to reset scene
+- X to reset to default view
+- C to enable pivot controls
+- R to reset scene
 
 #### Panel Controls
 - Full-screen mode
