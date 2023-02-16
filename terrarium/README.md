@@ -11,25 +11,25 @@ A ThreeJS Demo Scene with hands-free 3D navigation. This project serves as a pro
 This demo is built using the Webgazer Library for facial tracking, the KalmanJS library for camera stabilization and responsiveness, and ThreeJS + R3F libraries for 3D scene creation.
 
 ### Engines
-"node": "18.14.0",
-"npm": "8.19.3"
+- "node": "18.14.0"
+- "npm": "8.19.3"
 
 ### General dependencies
-"@mui/material": "^5.11.7",
-"@react-three/cannon": "^6.5.2",
-"@react-three/drei": "^9.56.1",
-"@react-three/fiber": "^8.10.1",
-"@react-three/rapier": "^0.9.0",
-"kalmanjs": "^1.1.0",
-"leva": "^0.9.34", // for debugging only
-"react": "^18.2.0",
-"react-dom": "^18.2.0",
-"react-full-screen": "^1.1.1",
-"react-scripts": "5.0.1",
-"three": "^0.148.0"
+- "@mui/material": "^5.11.7"
+- "@react-three/cannon": "^6.5.2"
+- "@react-three/drei": "^9.56.1"
+- "@react-three/fiber": "^8.10.1"
+- "@react-three/rapier": "^0.9.0"
+- "kalmanjs": "^1.1.0"
+- "leva": "^0.9.34" // for debugging only
+- "react": "^18.2.0"
+- "react-dom": "^18.2.0"
+- "react-full-screen": "^1.1.1"
+- "react-scripts": "5.0.1"
+- "three": "^0.148.0"
 
-Webgazer script source: (https://webgazer.cs.brown.edu/webgazer.js?)
-- (current webgazer npm package is failing, used script loading instead)
+- Webgazer script source: (https://webgazer.cs.brown.edu/webgazer.js?)
+   - (current webgazer npm package is failing, used script loading instead)
 
 #### Support Technologies
 - Blender
