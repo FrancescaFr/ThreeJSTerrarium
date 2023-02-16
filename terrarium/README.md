@@ -7,37 +7,37 @@
 
 A ThreeJS Demo Scene with hands-free 3D navigation. This project serves as a proof-of-concept for ML face tracking as an intuitive camera controller for 3D environments. Potential applications include hands-free CAD orbit controls and game navigation.
 
-## Current Functionality:
+## Current Functionality
 
 Controller currently responds accurately to L/R, Up/Down & FWD/BWD head movements. These are used to control Panning, Zoom, and Field of View.
 Eyegaze predictions from Webgazer are currently too innaccurate to be used for mouse-less raytracing.
 
-### Camera control modes:
+### Camera control modes
 - Built-In R3F manual Orbit Controller (Click & Drag / Scroll to Zoom)
 - Inspection Mode (Fixed focus, Face-driven position & zoom) 
 - Navigation Mode (Fixed position, Face-driven rotation)
 
-### ThreeJS Scene features:
+### ThreeJS Scene features
 - Rendering 3D models, Environment, lighting, etc.
 - Animation, physics, click-event & keyboard responses
 
 ### UI & Controls
-#### Keyboard Controls:
--Click to focus on object
--Arrow Keys/WASD to move
--Spacebar to flip view 180deg
--Shift to switch to mouse control
--[X] to reset to default view
--[C] to enable pivot controls
--[R]  to reset scene
+#### Keyboard Controlss
+- Click to focus on object
+- Arrow Keys/WASD to move
+- Spacebar to flip view 180deg
+- Shift to switch to mouse control
+- [X] to reset to default view
+- [C] to enable pivot controls
+- [R]  to reset scene
 
-#### Panel Controls:
--Full-screen mode
--Pause/start face tracking
--Show & reset face tracking
--Image stabilization filter settings
--Show gaze tracking 
--Show normalized sensor data
+#### Panel Controls
+- Full-screen mode
+- Pause/start face tracking
+- Show & reset face tracking
+- Image stabilization filter settings
+- Show gaze tracking 
+- Show normalized sensor data
 
 - View Mode Button (Inspect vs Navigate)
 
@@ -45,19 +45,21 @@ Eyegaze predictions from Webgazer are currently too innaccurate to be used for m
 This demo is built using the Webgazer Library for facial tracking, the KalmanJS library for camera stabilization and responsiveness, and ThreeJS + R3F libraries for 3D scene creation.
 
 ### Development Technologies
-#### Main Technologies:
+#### Main Technologies
 - JS / React (Front End)
-- Vercel (Deployment)
 - ThreeJS library
 - React-Three-Fiber
+- KalmanJS
 - WebGazer API
 - Facemesh API
+- Vercel (Deployment)
 
-#### Additional Technologies:
+#### Support Technologies
 - Blender
 - Photoshop
+- gltfjsx
 
-### Full dependency list:
+### Full dependency list
 
 #### Engines
 "node": "18.14.0",
@@ -78,7 +80,7 @@ This demo is built using the Webgazer Library for facial tracking, the KalmanJS 
 "three": "^0.148.0"
 
 Webgazer script source: (https://webgazer.cs.brown.edu/webgazer.js?)
-(current webgazer npm package is failing, used script loading instead)
+- (current webgazer npm package is failing, used script loading instead)
 
 ## Running Project
 ThreeJS Terrarium is a pure react app. To run, 
