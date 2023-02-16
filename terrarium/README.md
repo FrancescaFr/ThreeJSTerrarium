@@ -10,7 +10,7 @@ A ThreeJS Demo Scene with hands-free 3D navigation. This project serves as a pro
 ## Current Functionality:
 
 Controller currently responds accurately to L/R, Up/Down & FWD/BWD head movements. These are used to control Panning, Zoom, and Field of View.
-Eyegaze predictions from Webgazer are currently too innaccurate to be used for mouse-less raytracking.
+Eyegaze predictions from Webgazer are currently too innaccurate to be used for mouse-less raytracing.
 
 ### Camera control modes:
 - Built-In R3F manual Orbit Controller (Click & Drag / Scroll to Zoom)
