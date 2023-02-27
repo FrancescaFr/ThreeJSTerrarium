@@ -68,13 +68,13 @@ Eyegaze predictions from Webgazer are currently too innaccurate to be used for m
 - R to reset scene
 
 #### Panel Controls
+
 - Full-screen mode
 - Pause/start face tracking
 - Show & reset face tracking
 - Image stabilization filter settings
 - Show/hide gaze tracking 
 - Show/hide normalized sensor data
-
 - View Mode Button (Inspect vs Navigate)
 
 
