@@ -1,4 +1,5 @@
 # ThreeJSTerrarium
+Proof-of-concept for ML face tracking as an intuitive camera controller for 3D environments.
 
-High level repo for ThreeJSTerrarium projects and experiments.
-Main app lives in `/terrarium`
+This is a high-level repo for ThreeJSTerrarium projects and experiments.
+**Main demo app lives in [/terrarium](/terrarium)**
