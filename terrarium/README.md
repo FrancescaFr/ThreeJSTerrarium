@@ -1,6 +1,7 @@
 # Three JS Terrarium 
 
-### Deployment: [three-js-terrarium.vercel.app](three-js-terrarium.vercel.app)
+### Deployment: 
+[three-js-terrarium.vercel.app](three-js-terrarium.vercel.app)
 
 ---
 ## Project Description
