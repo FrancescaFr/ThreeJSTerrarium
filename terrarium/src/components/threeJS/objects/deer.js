@@ -5,10 +5,10 @@ source: https://sketchfab.com/3d-models/deer-sculpture-e97f99c0216a4cae9a8b11d04
 title: Deer Sculpture
 */
 
-import React, { useRef } from "react";
+import React, { useRef, forwardRef } from "react";
 import { useGLTF } from "@react-three/drei";
 
-export default function Deer(props) {
+const Deer = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF("/models/deer_sculpture.glb");
   return (
     <group {...props} dispose={null}>
@@ -31,6 +31,8 @@ export default function Deer(props) {
       </group>
     </group>
   );
-}
+})
 
 useGLTF.preload("/models/deer_sculpture.glb");
+
+export default Deer

@@ -5,6 +5,7 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { Box } from '@mui/material';
 
 
 export default function InfoPopup({ containerRef }) {
@@ -23,7 +24,7 @@ export default function InfoPopup({ containerRef }) {
   const id = open ? 'simple-popover' : undefined;
 
   return (
-    <div >
+    <div>
       <Button aria-describedby={id} onClick={handleClick}>
         <InfoOutlinedIcon />
       </Button>
@@ -36,22 +37,17 @@ export default function InfoPopup({ containerRef }) {
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
-        }}
-      >
-        <div className="popup">
-          <Typography sx={{ p: 2 }}>
-            <body>
-
-              <p><b>Move </b>[Arrow Keys / WASD]</p>
-              <p><b>Flip View</b> [Spacebar]</p>
-              <p><b>Reset View </b> [X]</p>
-              <p><b>Pivot Controls</b> [C]</p>
-              <p><b>Reset Scene</b> [R]</p>
-              <p><b>Mouse Controls</b> [Shift]</p>
-            </body>
-
-          </Typography>
-        </div>
-      </Popover >
-    </div >)
+        }}>
+        <Box className="popup" sx={{ padding: "1rem" }}>
+          {/* <Typography sx={{ p: 2 }}> */}
+          <Typography><b>Move </b>[Arrow Keys / WASD]</Typography>
+          <Typography><b>Flip View</b> [Spacebar]</Typography>
+          <Typography><b>Reset View </b> [X]</Typography>
+          <Typography><b>Pivot Controls</b> [C]</Typography>
+          <Typography><b>Reset Scene</b> [R]</Typography>
+          <Typography><b>Mouse Controls</b> [Shift]</Typography>
+          {/* </Typography> */}
+        </Box>
+      </Popover>
+    </div>)
 }

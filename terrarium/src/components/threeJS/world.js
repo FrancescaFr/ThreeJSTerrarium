@@ -1,15 +1,15 @@
+/* eslint-disable no-unused-vars */
 import { React, useRef, useState, Suspense } from 'react'
 import * as THREE from 'three';
 import { degToRad } from 'three/src/math/MathUtils';
 // import { useControls } from 'leva';
 import { Physics, CylinderCollider, RigidBody, Debug } from '@react-three/rapier'
 
-import { useFrame, useThree } from "@react-three/fiber"; //useThree, 
+import { useFrame, useThree } from "@react-three/fiber"; //useThree,
 import {
   OrbitControls, PivotControls, useKeyboardControls,
   PerspectiveCamera, useProgress,
-  Stars, Sky, Cloud, Environment, useTexture,
-  Text, Float, Html,
+  Stars, Sky, Cloud, Environment, useTexture, Float, Html,
   MeshReflectorMaterial,
   useGLTF, Clone, useAnimations,
   meshBounds
@@ -34,6 +34,7 @@ import CuttingBoard from './objects/cuttingBoard';
 import Stool from './objects/stool';
 import WoodenChair from './objects/woodenChair';
 import WoodenTable from './objects/woodenTable';
+import Log from './objects/log';
 
 
 import Table from './objects/table';
@@ -43,7 +44,7 @@ import Snail from './objects/gardensnail';
 import Fox from './objects/fox';
 import Deer from './objects/deer';
 import Plane from './objects/plane';
-import CustomObject from './customObject';
+// import CustomObject from './customObject';
 import Lights from './Scene/Lights/lights';
 import { MeshStandardMaterial } from 'three';
 
@@ -136,8 +137,8 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     const z = -Math.sin(angle) * 15
     flightRef.current.setNextKinematicTranslation({ x: x, y: 11, z: z })
 
-    // BUTTON PRESSES 
-    // check for scene reset   
+    // BUTTON PRESSES
+    // check for scene reset
     subscribeKeys(
       (state) => { return state.reset },
       (value) => {
@@ -148,7 +149,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       }
     )
 
-    // check for orbit state 
+    // check for orbit state
     subscribeKeys(
       (state) => { return state.shift },
       (value) => {
@@ -162,7 +163,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       }
     )
 
-    // check for X press    
+    // check for X press
     subscribeKeys(
       (state) => { return state.x },
       (value) => {
@@ -185,7 +186,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       (value) => {
         if (value) {
           console.log('spacebar function')
-          //Flip Navigation View 
+          //Flip Navigation View
           if (!playerState) {
             setSide(!side)
           }
@@ -248,7 +249,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
         state.camera.position.y = 2.2 - (userPositionData.head.y * 20);  // shift up and down with head
 
         // default camera positions
-        // state.camera.position.z = orient * (2 + (userPositionData.head.dist / 50)) 
+        // state.camera.position.z = orient * (2 + (userPositionData.head.dist / 50))
         // state.camera.position.x = 1 - orient * (userPositionData.head.x * 20); // shift side to side with head
 
         // dynamic camera position (relative to focal point)
@@ -281,13 +282,12 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
 
         const playerCameraTarget = new THREE.Vector3()
         playerCameraTarget.copy(playerPosition)
-        playerCameraTarget.z -= 0.25
-        playerCameraTarget.x += 0.25
+        playerCameraTarget.z -= 0.25 + (userPositionData.head.y * 5)
+        playerCameraTarget.x += 0.25 + (userPositionData.head.x * 5)
         playerCameraTarget.y += 0.1
 
         state.camera.position.copy(playerCamera)
         state.camera.lookAt(playerCameraTarget)
-
 
         // Independent Local Rotation Method
         const xAxis = new THREE.Vector3(1, 0, 0)
@@ -339,22 +339,17 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
     {/* <color attach="background" args={["black"]} /> */}
 
     <PerspectiveCamera makeDefault fov={45} zoom={1} near={0.1} far={200} position={[1, 0, 3]} />
-
     {/* leveraging orbitcontrols for camera orientation preservation in player mode, movement options overridden - TODO: extract relevant functionality and remove*/}
     {playerState ? <OrbitControls /> : null}
-
     {/* Full orbit controls in explorer mode */}
     {orbitState ? <OrbitControls /> : null}
-
     {/* TODO  - Add custom high res skybox from generated images (Gan360) */}
-
-    <Environment
+    {/* <Environment
       background={true} // can be true, false or "only" (which only sets the background) (default: false)
       blur={0} // blur factor between 0 and 1 (default: 0, only works with three 0.146 and up)
       preset="forest"
       scene={undefined} // adds the ability to pass a custom THREE.Scene, can also be a ref
-    />
-
+    /> */}
     {/* <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} /> */}
     {/* <Sky distance={450000} sunPosition={[0, .5, 1]} inclination={0} azimuth={0.25} /> */}
     <Cloud
@@ -373,7 +368,6 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       segments={5} // Number of particles
       position={[-10, 10, -15]}
     />
-
     {/* <Lights /> */}
     <directionalLight position={[1, 2, 3]} intensity={.5} />
     <pointLight position={[10, 10, 10]} intensity={1} />
@@ -388,19 +382,22 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       {/* <Debug /> */}
       {/* floor colliders */}
       <RigidBody type="fixed">
-        <mesh position-y={-0.5} scale={1}  >
+        <mesh position-y={-0.5} scale={1}>
           <boxGeometry args={[50, 1, 50]} />
           <meshStandardMaterial transparent={true} opacity={0} />
         </mesh>
       </RigidBody>
       <RigidBody type="fixed" >
-        <mesh position={[4.2, 0.35, -0.85]} scale={1} >
+        <mesh position={[4.2, 0.35, -0.85]} scale={1}>
           <boxGeometry args={[2.5, 0.1, 7.3]} />
           <meshStandardMaterial transparent={true} opacity={0} />
           {/* <MeshReflectorMaterial  {...wallColorMap} /> */}
         </mesh>
       </RigidBody>
       <Suspense>
+        <RigidBody scale={3} position={[-1, -0.28, 0]} type="fixed">
+          <Log />
+        </RigidBody>
         <RigidBody type="fixed">
           <OldTable scale={0.25} position={[3.9, 1.2, -4]} rotation-y={degToRad(-90)} onClick={clickHandler} />
         </RigidBody>
@@ -418,13 +415,14 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
           <WoodenTable scale={0.75} onClick={clickHandler} />
         </RigidBody>
       </Suspense>
-
       <Suspense>
         {/* non-fixed scene objects */}
-        <RigidBody position={[5, 2.6, -1.5]} colliders={false}>
-          <CylinderCollider args={[.19, 0.20]} position={[0, -0.15, 0]} />
-          <Bucket scale={0.7} onClick={clickHandler} />
-        </RigidBody>
+        <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+          <RigidBody position={[5, 2.6, -1.5]} colliders={false}>
+            <CylinderCollider args={[.19, 0.20]} position={[0, -0.15, 0]} />
+            <Bucket scale={0.7} onClick={clickHandler} />
+          </RigidBody>
+        </PivotControls>
         <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
           <RigidBody>
             <CuttingBoard position={[3.5, 1.4, -3.8]} onClick={clickHandler} />
@@ -433,9 +431,7 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
         <RigidBody>
           <Stool position={[5.5, 0.5, -2.7]} onClick={clickHandler} />
         </RigidBody>
-
         <group >
-
           <Snail
             navStart={navStart}
             ref={snailRef}
@@ -446,10 +442,15 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
             playerState={playerState}
             handlePlayerState={handlePlayerState}
             clickHandler={clickHandler} />
-
+          <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
+            <Snail
+              navStart={[0, 2, 0]}
+              getKeys={getKeys}
+              snailJump={snailJump}
+              clickHandler={clickHandler} />
+          </PivotControls>
         </group>
       </Suspense>
-
       <RigidBody
         ref={flightRef}
         rotation-y={degToRad(90)}
@@ -459,15 +460,11 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
           <Plane clickHandler={clickHandler} />
         </group>
       </RigidBody>
-
       {/* <CustomObject ref={customRef} /> */}
-
-
       {/* <group >
           <RigidBody type='fixed'>
             <mesh position-y={-0.5} scale={1} >
               <boxGeometry args={[10, 1, 10]} />
-
         <MeshReflectorMaterial
           resolution={512}
           blur={[1000, 1000]}
@@ -508,14 +505,10 @@ const World = ({ userPositionData, playerState, handlePlayerState, orbitState, h
       </mesh>
     </RigidBody>
   </group> */}
-
     </Physics >
-
     <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
       <Fox position={[- 8, 0.5, -1]} handleClick={clickHandler} foxActions={foxActions} />
     </PivotControls>
-
-
     <PivotControls anchor={[0, 0, 0]} visible={pivotView} opacity={0.5}>
       <Deer ref={deerRef} position={[-8, 0.5, 15]} scale={1.5} clickHandler={clickHandler} />
     </PivotControls>

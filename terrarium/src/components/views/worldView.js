@@ -190,12 +190,12 @@ export default function WorldView({ calibrate, handleCalibrate, userState, handl
         {!orbitState &&
           <Box className="fullscreen-buttons">
             {playerState ?
-              <Button onClick={handlePlayerState}> <div style={{ color: "black" }}>Navigation Mode</div> </Button> :
-              <Button onClick={handlePlayerState}> <div style={{ color: "black" }}>Inspect Mode </div></Button>}
+              <Button onClick={handlePlayerState}><div style={{ color: "black" }}>Navigation Mode</div></Button> :
+              <Button onClick={handlePlayerState}><div style={{ color: "black" }}>Inspect Mode</div></Button>}
           </Box>}
         {orbitState &&
           <Box className="fullscreen-buttons">
-            <Button onClick={handleOrbitState}> <div style={{ color: "black" }}>Mouse Control Mode </div></Button>
+            <Button onClick={handleOrbitState}><div style={{ color: "black" }}>Mouse Control Mode</div></Button>
           </Box>}
 
         <KeyboardControls

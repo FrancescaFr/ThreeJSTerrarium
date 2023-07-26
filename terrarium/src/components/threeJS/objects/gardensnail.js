@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from "react";
+import React, { useRef, forwardRef, useState } from "react";
 // import * as THREE from 'three';
 import { useGLTF, useTexture } from "@react-three/drei";
 import { useFrame } from '@react-three/fiber';
@@ -8,7 +8,7 @@ import { useKeyboardControls } from '@react-three/drei';
 import { degToRad } from "three/src/math/MathUtils";
 
 
-export default function Snail(props) {
+const Snail = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF("/models/gardensnail.glb");
   const shellColorMap = useTexture({ map: 'textures/beach-sand-wood-sunlight-texture-leaf-175730-pxhere.com.jpg' })
   const fleshColorMap = useTexture({ map: 'textures/creepy_flesh.jpg' })
@@ -125,26 +125,24 @@ export default function Snail(props) {
           receiveShadow
           geometry={nodes.garden_snail_1_4.geometry}
           material={materials.body}
-        >{hover ? <meshStandardMaterial {...floorColorMap} /> : <meshStandardMaterial {...shellColorMap} />} </mesh>
+        >{hover ? <meshStandardMaterial {...floorColorMap} /> : <meshStandardMaterial {...shellColorMap} />}</mesh>
         <mesh
           castShadow
           receiveShadow
           geometry={nodes.garden_snail_1_5.geometry}
           material={materials.body}
         >{hover ? <meshStandardMaterial {...floorColorMap} /> : <meshStandardMaterial {...shellColorMap} />}</mesh>
-
         <mesh
           castShadow
           receiveShadow
           geometry={nodes.garden_snail_1_6.geometry}
           material={materials.body}
-        >
-          {hover ? <meshStandardMaterial color="yellow" /> : <meshStandardMaterial {...shellColorMap} />}
-        </mesh>
+        >{hover ? <meshStandardMaterial color="yellow" /> : <meshStandardMaterial {...shellColorMap} />}</mesh>
       </group >
     </RigidBody>
   );
-}
+})
 
 useGLTF.preload("/models/gardensnail.glb");
 
+export default Snail
