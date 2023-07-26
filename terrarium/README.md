@@ -1,52 +1,83 @@
 # Three JS Terrarium 
 
-### Deployment: [three-js-terrarium.vercel.app](three-js-terrarium.vercel.app)
+### Deployment: 
+three-js-terrarium.vercel.app
 
 ---
-## Project Proposal
+## Project Description
 
-### Learning Goals
+A ThreeJS Demo Scene with hands-free 3D navigation. This project serves as a proof-of-concept for ML face tracking as an intuitive camera controller for 3D environments. Potential applications include hands-free CAD orbit controls and game navigation.
 
-- Learn to build 3D Scene with ThreeJS (Including Movement, Camera Control, & Lighting)
-- Learn how to integrate user interaction (browser events) into ThreeJS scene
-	- Learn to use Webcam Input and API to collect additional user data (eyetracking + pose estimation)
-- Learn to deploy FrontEnd JS site
-- (Probably not, but If Time - Build a Backend Component):
-	- Learn how to authenticate users, store userdata - possibly permit the upload of models (data heavy) or saving custom scenes (more lightweight - ex. store past user actions/events to restore camera location/threejs scene properties).
+## Dependencies
+This demo is built using the Webgazer Library for facial tracking, the KalmanJS library for camera stabilization and responsiveness, and ThreeJS + R3F libraries for 3D scene creation.
 
-### Project Description
+### Engines
+- "node": "18.14.0"
+- "npm": "8.19.3"
 
-The goal of this project is to make a responsive web-based 3D scene on a single page site using threeJS. Assets for the page would be built or exported to GLTF using Blender, or whole scenes being built with PolygonJS.
-- At a minimum, the user should be able to look around and navigate the scene using keyboard or mouse input.
--  Ideally, the user's view would be constrained like a window, with user's distance relative to the screen changing the camera perspective in the scene. Additionally, user gaze (where on the screen they are looking) may be used for navigation (moving camera within the scene).
--  Reach goals likely to be completed outside the 3-week capstone window would include authentication and persistent data storage - allowing users login, save their position or even upload or manipulate models.
+### General dependencies
+- "@mui/material": "^5.11.7"
+- "@react-three/cannon": "^6.5.2"
+- "@react-three/drei": "^9.56.1"
+- "@react-three/fiber": "^8.10.1"
+- "@react-three/rapier": "^0.9.0"
+- "kalmanjs": "^1.1.0"
+- "leva": "^0.9.34" // for debugging only
+- "react": "^18.2.0"
+- "react-dom": "^18.2.0"
+- "react-full-screen": "^1.1.1"
+- "react-scripts": "5.0.1"
+- "three": "^0.148.0"
 
-### Technologies
-#### Main Technologies:
-- JS / React (Front End)
-- Vercel (Deployment)
-- ThreeJS library
-- React-Three-Fiber
-- WebGazer API
-- Facemesh API
-- (Optional) OpenCV for pose tracking 
+- Webgazer script source: (https://webgazer.cs.brown.edu/webgazer.js?)
+   - (current webgazer npm package is failing, used script loading instead)
 
-#### Additional Technologies:
+#### Support Technologies
 - Blender
 - Photoshop
+- gltfjsx
+
+## Running Project
+ThreeJS Terrarium is a pure react app. To run, 
+1. `clone https://github.com/FrancescaFr/ThreeJSTerrarium.git`
+2. `cd terrarium`
+3. `npm install`
+4. `npm start` or `npm build`
+
+## Current Functionality
+
+Controller currently responds accurately to L/R, Up/Down & FWD/BWD head movements. These are used to control Panning, Zoom, and Field of View.
+Eyegaze predictions from Webgazer are currently too innaccurate to be used for mouse-less raytracing.
+
+### Camera control modes
+- Built-In R3F manual Orbit Controller (Click & Drag / Scroll to Zoom)
+- Inspection Mode (Fixed focus, Face-driven position & zoom) 
+- Navigation Mode (Fixed position, Face-driven rotation)
+
+### ThreeJS Scene features
+- Rendering 3D models, Environment, lighting, etc.
+- Animation, physics, click-event & keyboard responses
+
+### UI & Controls
+#### Keyboard Controls
+- Click to focus on object
+- Arrow Keys/WASD to move
+- Spacebar to flip view 180deg
+- Shift to switch to mouse control
+- X to reset to default view
+- C to enable pivot controls
+- R to reset scene
+
+#### Panel Controls
+
+- Full-screen mode
+- Pause/start face tracking
+- Show & reset face tracking
+- Image stabilization filter settings
+- Show/hide gaze tracking 
+- Show/hide normalized sensor data
+- View Mode Button (Inspect vs Navigate)
 
 
-### MVP Feature Set
 
-1.  Deploy Front End Website that recognizes and reports movements/and or facial features of user
-	- WebGazer for Eye tracking
-    - (Optional) OpenCV for pose tracking 
-    - (Optional) dashboard of tracked values
-2. ThreeJS scene rendering 3D Objects, lighting
-	-  Interactive/responsive elements (keyboard input)
-	-  (Optional) Eye-responsive camera view
-  
-- Deployed Frontend ThreeJS Scene
-	- 3D Objects & lighting Rendering
-	- Camera position responsive to manual user input (keyboard)
-	- Camera view responsive to webcam input (via WebGazer Eye Position or OpenCV pose est.)
+
