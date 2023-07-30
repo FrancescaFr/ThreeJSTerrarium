@@ -1,4 +1,5 @@
 # Three JS Terrarium 
+[Project Overview and Demo Videos](https://francesca.fyi/threejs-terrarium/)
 
 ### Deployment: 
 [three-js-terrarium.vercel.app](https://three-js-terrarium.vercel.app/)
@@ -8,6 +9,7 @@
 ## Project Description
 
 A ThreeJS Demo Scene with hands-free 3D navigation. This project serves as a proof-of-concept for ML face tracking as an intuitive camera controller for 3D environments. Potential applications include hands-free CAD orbit controls and game navigation.
+
 
 ## Running Project
 ThreeJS Terrarium is a pure react app. To run, 
